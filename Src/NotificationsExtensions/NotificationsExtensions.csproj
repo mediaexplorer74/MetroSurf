@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E96B73A4-881A-4F74-810E-9E58669F5758}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NotificationsExtensions</RootNamespace>
+    <AssemblyName>NotificationsExtensions</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+		<LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <PlatformTarget>ARM</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <PlatformTarget>ARM</PlatformTarget>
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
+    <PlatformTarget>ARM64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
+    <PlatformTarget>ARM64</PlatformTarget>
+    <OutputPath>bin\ARM64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="BadgeContent\BadgeGlyphNotificationContent.cs" />
+    <Compile Include="BadgeContent\BadgeNumericNotificationContent.cs" />
+    <Compile Include="BadgeContent\GlyphValue.cs" />
+    <Compile Include="BadgeContent\IBadgeNotificationContent.cs" />
+    <Compile Include="INotificationContent.cs" />
+    <Compile Include="INotificationContentImage.cs" />
+    <Compile Include="INotificationContentText.cs" />
+    <Compile Include="NotificationBase.cs" />
+    <Compile Include="NotificationContentImage.cs" />
+    <Compile Include="NotificationContentText.cs" />
+    <Compile Include="NotificationContentValidationException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TileContent\ISquare150x150TileInternal.cs" />
+    <Compile Include="TileContent\ISquare150x150TileNotificationContent.cs" />
+    <Compile Include="TileContent\ISquare310x310TileNotificationContent.cs" />
+    <Compile Include="TileContent\ISquare71x71TileInternal.cs" />
+    <Compile Include="TileContent\ISquare71x71TileNotificationContent.cs" />
+    <Compile Include="TileContent\ITileNotificationContent.cs" />
+    <Compile Include="TileContent\ITileSquare150x150Block.cs" />
+    <Compile Include="TileContent\ITileSquare150x150IconWithBadge.cs" />
+    <Compile Include="TileContent\ITileSquare150x150Image.cs" />
+    <Compile Include="TileContent\ITileSquare150x150PeekImageAndText01.cs" />
+    <Compile Include="TileContent\ITileSquare150x150PeekImageAndText02.cs" />
+    <Compile Include="TileContent\ITileSquare150x150PeekImageAndText03.cs" />
+    <Compile Include="TileContent\ITileSquare150x150PeekImageAndText04.cs" />
+    <Compile Include="TileContent\ITileSquare150x150Text01.cs" />
+    <Compile Include="TileContent\ITileSquare150x150Text02.cs" />
+    <Compile Include="TileContent\ITileSquare150x150Text03.cs" />
+    <Compile Include="TileContent\ITileSquare150x150Text04.cs" />
+    <Compile Include="TileContent\ITileSquare310x310BlockAndText01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310BlockAndText02.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Image.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageAndText01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageAndText02.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageAndTextOverlay01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageAndTextOverlay02.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageAndTextOverlay03.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageCollection.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageCollectionAndText01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310ImageCollectionAndText02.cs" />
+    <Compile Include="TileContent\ITileSquare310x310SmallImageAndText01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310SmallImagesAndTextList01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310SmallImagesAndTextList02.cs" />
+    <Compile Include="TileContent\ITileSquare310x310SmallImagesAndTextList03.cs" />
+    <Compile Include="TileContent\ITileSquare310x310SmallImagesAndTextList04.cs" />
+    <Compile Include="TileContent\ITileSquare310x310SmallImagesAndTextList05.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text02.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text03.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text04.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text05.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text06.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text07.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text08.cs" />
+    <Compile Include="TileContent\ITileSquare310x310Text09.cs" />
+    <Compile Include="TileContent\ITileSquare310x310TextList01.cs" />
+    <Compile Include="TileContent\ITileSquare310x310TextList02.cs" />
+    <Compile Include="TileContent\ITileSquare310x310TextList03.cs" />
+    <Compile Include="TileContent\ITileSquare71x71IconWithBadge.cs" />
+    <Compile Include="TileContent\ITileSquare71x71Image.cs" />
+    <Compile Include="TileContent\ITileWide310x150BlockAndText01.cs" />
+    <Compile Include="TileContent\ITileWide310x150BlockAndText02.cs" />
+    <Compile Include="TileContent\ITileWide310x150IconWithBadgeAndText.cs" />
+    <Compile Include="TileContent\ITileWide310x150Image.cs" />
+    <Compile Include="TileContent\ITileWide310x150ImageAndText01.cs" />
+    <Compile Include="TileContent\ITileWide310x150ImageAndText02.cs" />
+    <Compile Include="TileContent\ITileWide310x150ImageCollection.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImage01.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImage02.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImage03.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImage04.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImage05.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImage06.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageAndText01.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageAndText02.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageCollection01.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageCollection02.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageCollection03.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageCollection04.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageCollection05.cs" />
+    <Compile Include="TileContent\ITileWide310x150PeekImageCollection06.cs" />
+    <Compile Include="TileContent\ITileWide310x150SmallImageAndText01.cs" />
+    <Compile Include="TileContent\ITileWide310x150SmallImageAndText02.cs" />
+    <Compile Include="TileContent\ITileWide310x150SmallImageAndText03.cs" />
+    <Compile Include="TileContent\ITileWide310x150SmallImageAndText04.cs" />
+    <Compile Include="TileContent\ITileWide310x150SmallImageAndText05.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text01.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text02.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text03.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text04.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text05.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text06.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text07.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text08.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text09.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text10.cs" />
+    <Compile Include="TileContent\ITileWide310x150Text11.cs" />
+    <Compile Include="TileContent\IWide310x150TileInternal.cs" />
+    <Compile Include="TileContent\IWide310x150TileNotificationContent.cs" />
+    <Compile Include="TileContent\TileBranding.cs" />
+    <Compile Include="TileContent\TileContentFactory.cs" />
+    <Compile Include="TileContent\TileNotificationBase.cs" />
+    <Compile Include="TileContent\TileSquare150x150Base.cs" />
+    <Compile Include="TileContent\TileSquare150x150Block.cs" />
+    <Compile Include="TileContent\TileSquare150x150IconWithBadge.cs" />
+    <Compile Include="TileContent\TileSquare150x150Image.cs" />
+    <Compile Include="TileContent\TileSquare150x150PeekImageAndText01.cs" />
+    <Compile Include="TileContent\TileSquare150x150PeekImageAndText02.cs" />
+    <Compile Include="TileContent\TileSquare150x150PeekImageAndText03.cs" />
+    <Compile Include="TileContent\TileSquare150x150PeekImageAndText04.cs" />
+    <Compile Include="TileContent\TileSquare150x150Text01.cs" />
+    <Compile Include="TileContent\TileSquare150x150Text02.cs" />
+    <Compile Include="TileContent\TileSquare150x150Text03.cs" />
+    <Compile Include="TileContent\TileSquare150x150Text04.cs" />
+    <Compile Include="TileContent\TileSquare310x310Base.cs" />
+    <Compile Include="TileContent\TileSquare310x310BlockAndText01.cs" />
+    <Compile Include="TileContent\TileSquare310x310BlockAndText02.cs" />
+    <Compile Include="TileContent\TileSquare310x310Image.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageAndText01.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageAndText02.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageAndTextOverlay01.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageAndTextOverlay02.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageAndTextOverlay03.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageCollection.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageCollectionAndText01.cs" />
+    <Compile Include="TileContent\TileSquare310x310ImageCollectionAndText02.cs" />
+    <Compile Include="TileContent\TileSquare310x310SmallImageAndText01.cs" />
+    <Compile Include="TileContent\TileSquare310x310SmallImagesAndTextList01.cs" />
+    <Compile Include="TileContent\TileSquare310x310SmallImagesAndTextList02.cs" />
+    <Compile Include="TileContent\TileSquare310x310SmallImagesAndTextList03.cs" />
+    <Compile Include="TileContent\TileSquare310x310SmallImagesAndTextList04.cs" />
+    <Compile Include="TileContent\TileSquare310x310SmallImagesAndTextList05.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text01.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text02.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text03.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text04.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text05.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text06.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text07.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text08.cs" />
+    <Compile Include="TileContent\TileSquare310x310Text09.cs" />
+    <Compile Include="TileContent\TileSquare310x310TextList01.cs" />
+    <Compile Include="TileContent\TileSquare310x310TextList02.cs" />
+    <Compile Include="TileContent\TileSquare310x310TextList03.cs" />
+    <Compile Include="TileContent\TileSquare71x71Base.cs" />
+    <Compile Include="TileContent\TileSquare71x71IconWithBadge.cs" />
+    <Compile Include="TileContent\TileSquare71x71Image.cs" />
+    <Compile Include="TileContent\TileUtil.cs" />
+    <Compile Include="TileContent\TileWide310x150Base.cs" />
+    <Compile Include="TileContent\TileWide310x150BlockAndText01.cs" />
+    <Compile Include="TileContent\TileWide310x150BlockAndText02.cs" />
+    <Compile Include="TileContent\TileWide310x150IconWithBadgeAndText.cs" />
+    <Compile Include="TileContent\TileWide310x150Image.cs" />
+    <Compile Include="TileContent\TileWide310x150ImageAndText01.cs" />
+    <Compile Include="TileContent\TileWide310x150ImageAndText02.cs" />
+    <Compile Include="TileContent\TileWide310x150ImageCollection.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImage01.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImage02.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImage03.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImage04.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImage05.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImage06.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageAndText01.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageAndText02.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageCollection01.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageCollection02.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageCollection03.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageCollection04.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageCollection05.cs" />
+    <Compile Include="TileContent\TileWide310x150PeekImageCollection06.cs" />
+    <Compile Include="TileContent\TileWide310x150SmallImageAndText01.cs" />
+    <Compile Include="TileContent\TileWide310x150SmallImageAndText02.cs" />
+    <Compile Include="TileContent\TileWide310x150SmallImageAndText03.cs" />
+    <Compile Include="TileContent\TileWide310x150SmallImageAndText04.cs" />
+    <Compile Include="TileContent\TileWide310x150SmallImageAndText05.cs" />
+    <Compile Include="TileContent\TileWide310x150Text01.cs" />
+    <Compile Include="TileContent\TileWide310x150Text02.cs" />
+    <Compile Include="TileContent\TileWide310x150Text03.cs" />
+    <Compile Include="TileContent\TileWide310x150Text04.cs" />
+    <Compile Include="TileContent\TileWide310x150Text05.cs" />
+    <Compile Include="TileContent\TileWide310x150Text06.cs" />
+    <Compile Include="TileContent\TileWide310x150Text07.cs" />
+    <Compile Include="TileContent\TileWide310x150Text08.cs" />
+    <Compile Include="TileContent\TileWide310x150Text09.cs" />
+    <Compile Include="TileContent\TileWide310x150Text10.cs" />
+    <Compile Include="TileContent\TileWide310x150Text11.cs" />
+    <Compile Include="ToastContent\AlarmCommands.cs" />
+    <Compile Include="ToastContent\IAlarmCommands.cs" />
+    <Compile Include="ToastContent\IIncomingCallCommands.cs" />
+    <Compile Include="ToastContent\IncomingCallCommands.cs" />
+    <Compile Include="ToastContent\IToastAudio.cs" />
+    <Compile Include="ToastContent\IToastImageAndText01.cs" />
+    <Compile Include="ToastContent\IToastImageAndText02.cs" />
+    <Compile Include="ToastContent\IToastImageAndText03.cs" />
+    <Compile Include="ToastContent\IToastImageAndText04.cs" />
+    <Compile Include="ToastContent\IToastNotificationContent.cs" />
+    <Compile Include="ToastContent\IToastText01.cs" />
+    <Compile Include="ToastContent\IToastText02.cs" />
+    <Compile Include="ToastContent\IToastText03.cs" />
+    <Compile Include="ToastContent\IToastText04.cs" />
+    <Compile Include="ToastContent\ToastAudio.cs" />
+    <Compile Include="ToastContent\ToastAudioContent.cs" />
+    <Compile Include="ToastContent\ToastContentFactory.cs" />
+    <Compile Include="ToastContent\ToastDuration.cs" />
+    <Compile Include="ToastContent\ToastImageAndText01.cs" />
+    <Compile Include="ToastContent\ToastImageAndText02.cs" />
+    <Compile Include="ToastContent\ToastImageAndText03.cs" />
+    <Compile Include="ToastContent\ToastImageAndText04.cs" />
+    <Compile Include="ToastContent\ToastNotificationBase.cs" />
+    <Compile Include="ToastContent\ToastText01.cs" />
+    <Compile Include="ToastContent\ToastText02.cs" />
+    <Compile Include="ToastContent\ToastText03.cs" />
+    <Compile Include="ToastContent\ToastText04.cs" />
+    <Compile Include="Util.cs" />
+    <EmbeddedResource Include="Properties\NotificationsExtensions.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
+      <Version>6.2.14</Version>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
+    <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

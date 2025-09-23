@@ -1,0 +1,12 @@
+<UserControl
+    x:Class="VPN.ExtendedSplash"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VPN"
+    xmlns:controls="using:Windows.UI.Xaml.Controls"
+    >
+    <Grid x:Name="LayoutRoot">
+        <Image x:Name="InnerImage" Visibility="Visible" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <ProgressRing x:Name="ProgressRing" Width="45" Height="45" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,180" IsActive="True"/>
+    </Grid>
+</UserControl>
