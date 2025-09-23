@@ -34,8 +34,7 @@ namespace MetroLog
       this.Owner = owner;
       this.Owner.LoggerCreated += new EventHandler<LoggerEventArgs>(this.Owner_LoggerCreated);
       this.Clients = new List<ILazyFlushable>();
-      // ISSUE: method pointer
-      this.Timer = ThreadPoolTimer.CreatePeriodicTimer(new TimerElapsedHandler((object) this, __methodptr(\u003C\u002Ector\u003Eb__17_0)), TimeSpan.FromMinutes(2.0));
+      this.Timer = ThreadPoolTimer.CreatePeriodicTimer((t) => { _ = this.LazyFlushAsync(new LogWriteContext()); }, TimeSpan.FromMinutes(2.0));
     }
 
     private void Owner_LoggerCreated(object sender, LoggerEventArgs e)
@@ -56,7 +55,8 @@ namespace MetroLog
       if (LoggingEnvironment.XamlApplicationState != XamlApplicationState.Available)
         return;
       Application current = Application.Current;
-      WindowsRuntimeMarshal.AddEventHandler<SuspendingEventHandler>(new Func<SuspendingEventHandler, EventRegistrationToken>(current.add_Suspending), new Action<EventRegistrationToken>(current.remove_Suspending), new SuspendingEventHandler(LazyFlushManager.Current_Suspending));
+      WindowsRuntimeMarshal.AddEventHandler<SuspendingEventHandler>(new Func<SuspendingEventHandler, EventRegistrationToken>(current.add_Suspending), 
+          new Action<EventRegistrationToken>(current.remove_Suspending), new SuspendingEventHandler(LazyFlushManager.Current_Suspending));
     }
 
     private static async void Current_Suspending(object sender, SuspendingEventArgs e)

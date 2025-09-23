@@ -5,6 +5,13 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="MetroSurf/MetroSurf.csproj" Id="7cb00ad3-556e-4057-b946-aadbc3fd423b">
+    <Platform Solution="*|ARM" Project="ARM" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+    <Deploy />
+  </Project>
   <Project Path="MetroLab.Common/MetroLab.Common.csproj" Id="6a51639d-0f43-4082-ba59-29fd498f15ae">
     <Platform Solution="*|ARM" Project="ARM" />
     <Platform Solution="*|ARM64" Project="ARM64" />
@@ -52,12 +59,5 @@
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
     <Platform Solution="*|x86" Project="x86" />
-  </Project>
-  <Project Path="VPN/MetroSurf.csproj" Id="7cb00ad3-556e-4057-b946-aadbc3fd423b">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-    <Deploy />
   </Project>
 </Solution>

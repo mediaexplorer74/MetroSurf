@@ -12,16 +12,24 @@ using Windows.UI.Notifications;
 #nullable disable
 namespace NotificationsExtensions.ToastContent
 {
-  internal class ToastNotificationBase(string templateName, int imageCount, int textCount) : 
-    NotificationBase(templateName, (string) null, imageCount, textCount),
-    IToastNotificationContent,
-    INotificationContent
+  internal class ToastNotificationBase : NotificationBase, IToastNotificationContent, INotificationContent
   {
     private string m_Launch;
     private IToastAudio m_Audio = (IToastAudio) new ToastAudio();
     private IIncomingCallCommands m_IncomingCallCommands = (IIncomingCallCommands) new global::NotificationsExtensions.ToastContent.IncomingCallCommands();
     private IAlarmCommands m_AlarmCommands = (IAlarmCommands) new global::NotificationsExtensions.ToastContent.AlarmCommands();
-    private \u003CCLR\u003EToastDuration m_Duration;
+    private ToastDuration m_Duration;
+
+    // Constructor added to replace decompiled header
+    public ToastNotificationBase(string templateName, int imageCount, int textCount)
+      : base(templateName, null, imageCount, textCount)
+    {
+      this.m_Launch = null;
+      this.m_Audio = new ToastAudio();
+      this.m_IncomingCallCommands = new IncomingCallCommands();
+      this.m_AlarmCommands = new AlarmCommands();
+      this.m_Duration = ToastDuration.Short;
+    }
 
     private bool AudioSrcIsLooping()
     {
@@ -32,7 +40,7 @@ namespace NotificationsExtensions.ToastContent
     {
       if (!this.StrictValidation)
         return;
-      if (this.Audio.Loop && this.Duration != \u003CCLR\u003EToastDuration.Long)
+      if (this.Audio.Loop && this.Duration != ToastDuration.Long)
         throw new NotificationContentValidationException("Looping audio is only available for long duration toasts.");
       if (this.Audio.Loop && !this.AudioSrcIsLooping())
         throw new NotificationContentValidationException("A looping audio src must be chosen if the looping audio property is set.");
@@ -223,7 +231,7 @@ namespace NotificationsExtensions.ToastContent
       StringBuilder builder = new StringBuilder("<toast");
       if (!string.IsNullOrEmpty(this.Launch))
         builder.AppendFormat(" launch='{0}'", (object) Util.HttpEncode(this.Launch));
-      if (this.Duration != \u003CCLR\u003EToastDuration.Short)
+      if (this.Duration != ToastDuration.Short)
         builder.AppendFormat(" duration='{0}'", (object) this.Duration.ToString().ToLowerInvariant());
       builder.Append(">");
       builder.AppendFormat("<visual version='{0}'", (object) 1);
@@ -266,12 +274,12 @@ namespace NotificationsExtensions.ToastContent
       set => this.m_Launch = value;
     }
 
-    public \u003CCLR\u003EToastDuration Duration
+    public ToastDuration Duration
     {
       get => this.m_Duration;
       set
       {
-        this.m_Duration = Enum.IsDefined(typeof (\u003CCLR\u003EToastDuration), (object) value) ? value : throw new ArgumentOutOfRangeException(nameof (value));
+        this.m_Duration = Enum.IsDefined(typeof (ToastDuration), (object) value) ? value : throw new ArgumentOutOfRangeException(nameof (value));
       }
     }
   }

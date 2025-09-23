@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 #nullable disable
 namespace MetroLog.Internal
 {
-  internal class LogManagerBase : ILogManager
+  public class LogManagerBase : ILogManager
   {
     private readonly Dictionary<string, Logger> _loggers;
     private readonly object _loggersLock = new object();

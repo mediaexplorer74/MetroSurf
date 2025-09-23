@@ -141,6 +141,12 @@
     <Compile Include="ExtendedSplash.xaml.cs">
       <DependentUpon>ExtendedSplash.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Controls\Header.xaml.cs">
+      <DependentUpon>Header.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -149,20 +155,22 @@
     <Compile Include="ViewModel\Pages\RatingsHelper.cs" />
     <Compile Include="View\ChangePasswordPage.cs" />
     <Compile Include="View\Controls\AnimatedImage.cs" />
-    <Compile Include="View\Controls\Header.cs" />
     <Compile Include="View\Controls\ListViewBaseItemClickCommand.cs" />
     <Compile Include="View\Controls\Sector.cs" />
     <Compile Include="View\Controls\ValidationTextBoxUpdateSourceTextHelper.cs" />
-    <Compile Include="View\Controls\XamlIcon.cs" />
+    <Compile Include="View\Controls\XamlIcon.xaml.cs" />
     <Compile Include="View\GuideGalleryPage.cs" />
     <Compile Include="View\InviteFriendPage.cs" />
     <Compile Include="View\LoginKeepSolidIDPage.cs" />
-    <Compile Include="View\LoginPage.cs" />
     <Compile Include="View\OverviewGalleryPage.cs" />
     <Compile Include="View\RegistrationPage.cs" />
     <Compile Include="View\ServerCredentialsPage.cs" />
-    <Compile Include="View\ServerCredentialsPageWin10.cs" />
-    <Compile Include="View\SettingsPage.cs" />
+    <Compile Include="View\ServerCredentialsPageWin10.xaml.cs">
+      <DependentUpon>ServerCredentialsPageWin10.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -207,11 +215,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Controls\Header.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Controls\XamlIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\InviteFriendPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\LoginKeepSolidIDPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\LoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -224,6 +244,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\OverviewGalleryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\ServerCredentialsPageWin10.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\SettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -18,11 +18,13 @@ using Windows.Storage.Streams;
 #nullable disable
 namespace MetroLog
 {
-  internal class LogManager(LoggingConfiguration configuration) : 
-    LogManagerBase(configuration),
-    IWinRTLogManager,
-    ILogManager
+  public class LogManager : LogManagerBase, IWinRTLogManager, ILogManager
   {
+    public LogManager(LoggingConfiguration configuration)
+      : base(configuration)
+    {
+    }
+
     public async Task<IStorageFile> GetCompressedLogFile()
     {
       Stream stream = await this.GetCompressedLogs();
@@ -37,31 +39,35 @@ namespace MetroLog
 
     public Task ShareLogFile(string title, string description)
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      LogManager.\u003C\u003Ec__DisplayClass2_0 cDisplayClass20 = new LogManager.\u003C\u003Ec__DisplayClass2_0()
+      try
       {
-        \u003C\u003E4__this = this,
-        title = title,
-        description = description,
-        dtm = DataTransferManager.GetForCurrentView(),
-        tcs = new TaskCompletionSource<object>(),
-        handler = (TypedEventHandler<DataTransferManager, DataRequestedEventArgs>) null
-      };
-      // ISSUE: reference to a compiler-generated field
-      // ISSUE: method pointer
-      cDisplayClass20.handler = new TypedEventHandler<DataTransferManager, DataRequestedEventArgs>((object) cDisplayClass20, __methodptr(\u003CShareLogFile\u003Eb__0));
-      // ISSUE: reference to a compiler-generated field
-      DataTransferManager dtm = cDisplayClass20.dtm;
-      // ISSUE: reference to a compiler-generated field
-      WindowsRuntimeMarshal.AddEventHandler<TypedEventHandler<DataTransferManager, DataRequestedEventArgs>>(new Func<TypedEventHandler<DataTransferManager, DataRequestedEventArgs>, EventRegistrationToken>(dtm.add_DataRequested), new Action<EventRegistrationToken>(dtm.remove_DataRequested), cDisplayClass20.handler);
-      DataTransferManager.ShowShareUI();
-      return (Task) Task.FromResult<bool>(true);
+        var dtm = DataTransferManager.GetForCurrentView();
+        TypedEventHandler<DataTransferManager, DataRequestedEventArgs> handler = null;
+        handler = (sender, args) =>
+        {
+          try
+          {
+            args.Request.Data.Properties.Title = title ?? string.Empty;
+            args.Request.Data.SetText(description ?? string.Empty);
+          }
+          finally
+          {
+            try { dtm.DataRequested -= handler; } catch { }
+          }
+        };
+        dtm.DataRequested += handler;
+        DataTransferManager.ShowShareUI();
+      }
+      catch
+      {
+        // Ignore failures
+      }
+      return Task.CompletedTask;
     }
 
     private void dtm_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
     {
-      args.Request.Data.Properties.put_Title("Foobar");
+      args.Request.Data.Properties.Title = "Foobar";
       args.Request.Data.SetText("Yay!");
     }
   }

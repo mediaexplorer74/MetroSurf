@@ -1,0 +1,8 @@
+<UserControl
+    x:Class="VPN.View.Controls.Header"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <!-- Header layout placeholder -->
+    </Grid>
+</UserControl>
