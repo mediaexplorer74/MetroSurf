@@ -1,0 +1,8 @@
+<UserControl
+  x:Class="VPN.View.Controls.AnimatedImage"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid x:Name="Root">
+    <Image x:Name="InnerImage" Stretch="Uniform" />
+  </Grid>
+</UserControl>

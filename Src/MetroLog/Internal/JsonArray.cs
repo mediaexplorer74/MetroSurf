@@ -11,7 +11,7 @@ using System.ComponentModel;
 namespace MetroLog.Internal
 {
   [EditorBrowsable(EditorBrowsableState.Never)]
-  internal class JsonArray : List<object>
+  public class JsonArray : List<object>
   {
     public JsonArray()
     {

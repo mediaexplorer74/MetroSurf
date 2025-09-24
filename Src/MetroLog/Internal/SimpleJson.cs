@@ -16,7 +16,7 @@ using System.Text;
 #nullable disable
 namespace MetroLog.Internal
 {
-  internal class SimpleJson
+  public class SimpleJson
   {
     private const int TOKEN_NONE = 0;
     private const int TOKEN_CURLY_OPEN = 1;

@@ -1,4 +1,5 @@
 # MetroSurf v xx.xx - main branch
+![](/Images/logo.png)
 
 MetroSurf WP8 edition v 1.0.1-alpha decomp. JetBrains DotPeek used.
 
@@ -24,4 +25,6 @@ MetroSurf WP8 edition v 1.0.1-alpha decomp. JetBrains DotPeek used.
 
 ## ..
 
-[m][e] 23 Sep 2025
+[m][e] 24 Sep 2025
+
+![](/Images/footer.png)

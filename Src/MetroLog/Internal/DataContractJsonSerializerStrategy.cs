@@ -13,7 +13,7 @@ using System.Runtime.Serialization;
 #nullable disable
 namespace MetroLog.Internal
 {
-  internal class DataContractJsonSerializerStrategy : PocoJsonSerializerStrategy
+  public class DataContractJsonSerializerStrategy : PocoJsonSerializerStrategy
   {
     public DataContractJsonSerializerStrategy()
     {

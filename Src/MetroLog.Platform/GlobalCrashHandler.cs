@@ -16,13 +16,13 @@ namespace MetroLog
     public static void Configure()
     {
       Application current = Application.Current;
-      WindowsRuntimeMarshal.AddEventHandler<UnhandledExceptionEventHandler>(new Func<UnhandledExceptionEventHandler, EventRegistrationToken>(current.add_UnhandledException), new Action<EventRegistrationToken>(current.remove_UnhandledException), new UnhandledExceptionEventHandler(GlobalCrashHandler.App_UnhandledException));
+      current.UnhandledException += GlobalCrashHandler.App_UnhandledException;
     }
 
     private static async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-      WindowsRuntimeMarshal.RemoveEventHandler<UnhandledExceptionEventHandler>(new Action<EventRegistrationToken>(Application.Current.remove_UnhandledException), new UnhandledExceptionEventHandler(GlobalCrashHandler.App_UnhandledException));
-      e.put_Handled(true);
+      Application.Current.UnhandledException -= GlobalCrashHandler.App_UnhandledException;
+      e.Handled = true;
       LogWriteOperation[] logWriteOperationArray = await ((ILoggerAsync) LogManagerFactory.DefaultLogManager.GetLogger<Application>()).FatalAsync("The application crashed: " + e.Message, (object) e);
       await LazyFlushManager.FlushAllAsync(new LogWriteContext());
       Application.Current.Exit();

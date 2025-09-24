@@ -55,8 +55,7 @@ namespace MetroLog
       if (LoggingEnvironment.XamlApplicationState != XamlApplicationState.Available)
         return;
       Application current = Application.Current;
-      WindowsRuntimeMarshal.AddEventHandler<SuspendingEventHandler>(new Func<SuspendingEventHandler, EventRegistrationToken>(current.add_Suspending), 
-          new Action<EventRegistrationToken>(current.remove_Suspending), new SuspendingEventHandler(LazyFlushManager.Current_Suspending));
+      current.Suspending += new SuspendingEventHandler(LazyFlushManager.Current_Suspending);
     }
 
     private static async void Current_Suspending(object sender, SuspendingEventArgs e)

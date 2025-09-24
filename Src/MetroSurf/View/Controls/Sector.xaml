@@ -1,0 +1,14 @@
+<UserControl
+  x:Class="VPN.View.Controls.Sector"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="using:VPN.View.Controls">
+  <Grid x:Name="LayoutRootGrid" Width="60" Height="60">
+    <!-- Filled portion -->
+    <Path x:Name="PathPercentElement" Fill="#FF4CAF50" Data="{Binding PathPercent}" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <!-- Rest of circle (stroke) -->
+    <Path x:Name="PathRestElement" Stroke="#FFB0BEC5" StrokeThickness="2" Data="{Binding PathRestPart}" Stretch="None" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <!-- Percentage text -->
+    <TextBlock x:Name="PercentText" Text="{Binding PercentString}" FontSize="{Binding PercentStringFontSize}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+  </Grid>
+</UserControl>

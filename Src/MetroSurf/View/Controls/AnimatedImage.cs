@@ -1,8 +1,5 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: VPN.View.Controls.AnimatedImage
-// Assembly: VPN, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 9341524F-1843-4B25-9300-CCE3043D39C8
-// Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\VPN.exe
 
 using System;
 using System.CodeDom.Compiler;
@@ -17,43 +14,38 @@ using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 #nullable disable
 namespace VPN.View.Controls
 {
-  public sealed class AnimatedImage : Grid, IComponentConnector
+  public sealed partial class AnimatedImage : UserControl
   {
     private volatile bool _isStopped = true;
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     public static readonly DependencyProperty SourceStreamProperty = DependencyProperty.Register(nameof (SourceStream), typeof (IRandomAccessStream), typeof (AnimatedImage), new PropertyMetadata((object) null, new Windows.UI.Xaml.PropertyChangedCallback(AnimatedImage.PropertyChangedCallback)));
     public static readonly DependencyProperty StretchProperty = DependencyProperty.Register(nameof (Stretch), typeof (Stretch), typeof (AnimatedImage), new PropertyMetadata((object) null));
-    [GeneratedCode("Microsoft.Windows.UI.Xaml.Build.Tasks", " 4.0.0.0")]
-    private Grid Root;
-    [GeneratedCode("Microsoft.Windows.UI.Xaml.Build.Tasks", " 4.0.0.0")]
-    private Image InnerImage;
-    [GeneratedCode("Microsoft.Windows.UI.Xaml.Build.Tasks", " 4.0.0.0")]
-    private bool _contentLoaded;
 
     public AnimatedImage()
     {
       this.InitializeComponent();
       this.Stretch = (Stretch) 2;
-      WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>(new Func<RoutedEventHandler, EventRegistrationToken>(((FrameworkElement) this).add_Unloaded), new Action<EventRegistrationToken>(((FrameworkElement) this).remove_Unloaded), (RoutedEventHandler) ((s, e) =>
+
+      // Normal event handlers instead of explicit WindowsRuntimeMarshal calls
+      this.Unloaded += (s, e) =>
       {
         this._isStopped = true;
         this._cancellationTokenSource.Cancel();
-      }));
-      WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>(new Func<RoutedEventHandler, EventRegistrationToken>(((FrameworkElement) this).add_Loaded), new Action<EventRegistrationToken>(((FrameworkElement) this).remove_Loaded), (RoutedEventHandler) ((s, e) =>
+      };
+
+      this.Loaded += (s, e) =>
       {
         this._isStopped = false;
         if (this.SourceStream == null)
           return;
-        this.InitializeWithNewImage(this.SourceStream);
-      }));
+        _ = this.InitializeWithNewImage(this.SourceStream);
+      };
     }
 
     private static async Task<AnimatedImage.ImageFrameContainer> GetFrame(
@@ -81,7 +73,7 @@ namespace VPN.View.Controls
         this._cancellationTokenSource.Cancel();
         if (imageStream == null || imageStream.Size == 0UL)
         {
-          this.InnerImage.put_Source((ImageSource) null);
+          this.InnerImage.Source = (ImageSource) null;
         }
         else
         {
@@ -150,12 +142,12 @@ namespace VPN.View.Controls
           AnimatedImage.ImageFrameContainer imageFrameContainer = items[currentFrameNumber];
           if (!this.IsStretch)
           {
-            ((FrameworkElement) this.InnerImage).put_MaxWidth((double) imageFrameContainer.PixelWidth);
-            ((FrameworkElement) this.InnerImage).put_MaxHeight((double) imageFrameContainer.PixelHeight);
+            this.InnerImage.MaxWidth = (double) imageFrameContainer.PixelWidth;
+            this.InnerImage.MaxHeight = (double) imageFrameContainer.PixelHeight;
           }
           if (this.NeedToEnlarge)
             this.EnlargeImage(imageFrameContainer.PixelWidth, imageFrameContainer.PixelHeight);
-          this.InnerImage.put_Source(imageFrameContainer.ImageSource);
+          this.InnerImage.Source = imageFrameContainer.ImageSource;
           await Task.Delay(imageFrameContainer.Delay, cancellationToken);
           ++currentFrameNumber;
         }
@@ -167,12 +159,12 @@ namespace VPN.View.Controls
         AnimatedImage.ImageFrameContainer imageFrameContainer = items[0];
         if (!this.IsStretch)
         {
-          ((FrameworkElement) this.InnerImage).put_MaxWidth((double) imageFrameContainer.PixelWidth);
-          ((FrameworkElement) this.InnerImage).put_MaxHeight((double) imageFrameContainer.PixelHeight);
+          this.InnerImage.MaxWidth = (double) imageFrameContainer.PixelWidth;
+          this.InnerImage.MaxHeight = (double) imageFrameContainer.PixelHeight;
         }
         if (this.NeedToEnlarge)
           this.EnlargeImage(imageFrameContainer.PixelWidth, imageFrameContainer.PixelHeight);
-        this.InnerImage.put_Source(imageFrameContainer.ImageSource);
+        this.InnerImage.Source = imageFrameContainer.ImageSource;
       }
     }
 
@@ -196,8 +188,8 @@ namespace VPN.View.Controls
         num2 = (double) currentWidth * num4;
         num3 = (double) currentHeight * num4;
       }
-      ((FrameworkElement) this.InnerImage).put_MaxWidth(num2);
-      ((FrameworkElement) this.InnerImage).put_MaxHeight(num3);
+      this.InnerImage.MaxWidth = num2;
+      this.InnerImage.MaxHeight = num3;
     }
 
     public IRandomAccessStream SourceStream
@@ -226,22 +218,6 @@ namespace VPN.View.Controls
       get => (Stretch) ((DependencyObject) this).GetValue(AnimatedImage.StretchProperty);
       set => ((DependencyObject) this).SetValue(AnimatedImage.StretchProperty, (object) value);
     }
-
-    [GeneratedCode("Microsoft.Windows.UI.Xaml.Build.Tasks", " 4.0.0.0")]
-    [DebuggerNonUserCode]
-    public void InitializeComponent()
-    {
-      if (this._contentLoaded)
-        return;
-      this._contentLoaded = true;
-      Application.LoadComponent((object) this, new Uri("ms-appx:///View/Controls/AnimatedImage.xaml"), (ComponentResourceLocation) 0);
-      this.Root = (Grid) ((FrameworkElement) this).FindName("Root");
-      this.InnerImage = (Image) ((FrameworkElement) this).FindName("InnerImage");
-    }
-
-    [GeneratedCode("Microsoft.Windows.UI.Xaml.Build.Tasks", " 4.0.0.0")]
-    [DebuggerNonUserCode]
-    public void Connect(int connectionId, object target) => this._contentLoaded = true;
 
     private class ImageFrameContainer
     {

@@ -1,52 +1,75 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: NotificationsExtensions.BadgeContent.BadgeGlyphNotificationContent
-// Assembly: NotificationsExtensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null, ContentType=WindowsRuntime
-// MVID: 45D5A015-032A-4E9A-A1F7-E4E00D40AE62
-// Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\NotificationsExtensions.winmd
-
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System;
 using Windows.Data.Xml.Dom;
-using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Notifications;
 
 #nullable disable
 namespace NotificationsExtensions.BadgeContent
 {
-  [MarshalingBehavior]
-  [Threading]
-  [Version(16777216)]
-  [CompilerGenerated]
-  [Activatable(16777216)]
-  [Activatable(typeof (IBadgeGlyphNotificationContentFactory), 16777216)]
-  public sealed class BadgeGlyphNotificationContent : 
-    IBadgeNotificationContent,
-    INotificationContent,
-    IBadgeGlyphNotificationContentClass,
-    IStringable
-  {
-    [MethodImpl]
-    public extern BadgeGlyphNotificationContent();
+    public sealed class BadgeGlyphNotificationContent : IBadgeNotificationContent, INotificationContent
+    {
+        public BadgeGlyphNotificationContent()
+        {
+            Glyph = GlyphValue.None;
+        }
 
-    [MethodImpl]
-    public extern BadgeGlyphNotificationContent([In] GlyphValue glyph);
+        public BadgeGlyphNotificationContent(GlyphValue glyph)
+        {
+            Glyph = glyph;
+        }
 
-    [MethodImpl]
-    public extern string GetContent();
+        public GlyphValue Glyph { get; set; }
 
-    [MethodImpl]
-    public extern XmlDocument GetXml();
+        // Returns the XML payload as string
+        public string GetContent()
+        {
+            var xml = GetXml();
+            return xml?.GetXml();
+        }
 
-    [MethodImpl]
-    public extern BadgeNotification CreateNotification();
+        // Build the XmlDocument according to badge schema for glyphs
+        public XmlDocument GetXml()
+        {
+            var doc = new XmlDocument();
+            // The badge value for glyphs is the string name of the glyph in lower-case
+            var value = GlyphToString(Glyph);
+            // Create minimal badge XML
+            var xml = $"<badge value=\"{value}\"/>";
+            doc.LoadXml(xml);
+            return doc;
+        }
 
-    public extern GlyphValue Glyph { [MethodImpl] get; [MethodImpl] [param: In] set; }
+        public BadgeNotification CreateNotification()
+        {
+            var xml = GetXml();
+            return new BadgeNotification(xml);
+        }
 
-    [MethodImpl]
-    public override sealed extern string ToString();
+        public override string ToString()
+        {
+            return GetContent();
+        }
 
-    [MethodImpl]
-    extern string IStringable.ToString();
-  }
+        private static string GlyphToString(GlyphValue gv)
+        {
+            // Map enum names to badge glyph strings used by the system
+            switch (gv)
+            {
+                case GlyphValue.Activity: return "activity";
+                case GlyphValue.Alert: return "alert";
+                case GlyphValue.Available: return "available";
+                case GlyphValue.Away: return "away";
+                case GlyphValue.Busy: return "busy";
+                case GlyphValue.NewMessage: return "newMessage";
+                case GlyphValue.Paused: return "paused";
+                case GlyphValue.Playing: return "playing";
+                case GlyphValue.Unavailable: return "unavailable";
+                case GlyphValue.Error: return "error";
+                case GlyphValue.Attention: return "attention";
+                case GlyphValue.Alarm: return "alarm";
+                case GlyphValue.None:
+                default:
+                    return "none";
+            }
+        }
+    }
 }

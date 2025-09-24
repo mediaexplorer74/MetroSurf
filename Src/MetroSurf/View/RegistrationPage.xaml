@@ -1,0 +1,14 @@
+<mlc:MvvmPage
+    x:Class="VPN.View.RegistrationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mlc="using:MetroLab.Common">
+    <Grid x:Name="LayoutRoot" Loaded="BasePage_Loaded">
+        <StackPanel Spacing="12">
+            <ProgressBar x:Name="ProgressBar" Visibility="Collapsed"/>
+            <TextBox x:Name="LoginTextbox" KeyUp="LoginTextBoxOnKeyUp"/>
+            <PasswordBox x:Name="PasswordBox" KeyUp="PasswordBoxOnKeyUp1"/>
+            <PasswordBox x:Name="ConfirmPasswordBox" KeyUp="PasswordBoxOnKeyUp"/>
+        </StackPanel>
+    </Grid>
+</mlc:MvvmPage>

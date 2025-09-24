@@ -9,7 +9,7 @@ using System;
 #nullable disable
 namespace MetroLog.Internal
 {
-  internal interface IJsonSerializerStrategy
+  public interface IJsonSerializerStrategy
   {
     bool SerializeNonPrimitiveObject(object input, out object output);
 

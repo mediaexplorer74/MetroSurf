@@ -56,7 +56,7 @@ namespace VPN
             mainFrame.AddSupportedPageViewModel(typeof(ServerCredentialsPageViewModelWin10), typeof(ServerCredentialsPageWin10));
             mainFrame.AddSupportedPageViewModel(typeof(InviteFriendPageViewModel), typeof(InviteFriendPage));
             mainFrame.AddSupportedPageViewModel(typeof(OverviewGalleryPageViewModel), typeof(OverviewGalleryPage));
-            mainFrame.AddSupportedPageViewModel(typeof(RegistrationPageViewModel), typeof(RegistrationPage));
+            mainFrame.AddSupportedPageViewModel(typeof(RegistrationPageViewModel), typeof(VPN.View.RegistrationPage));
             mainFrame.AddSupportedPageViewModel(typeof(ChangePasswordPageViewModel), typeof(ChangePasswordPage));
 
             return mainFrame;

@@ -9,7 +9,7 @@ using System;
 #nullable disable
 namespace MetroLog.Internal
 {
-  internal static class PlatformAdapter
+  public static class PlatformAdapter
   {
     private static IAdapterResolver _resolver = (IAdapterResolver) new ProbingAdapterResolver();
 
