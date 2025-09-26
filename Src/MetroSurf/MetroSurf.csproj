@@ -18,7 +18,7 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>F3DCFD99736B8EF54F3803CF21D14CBE8F5BB78D</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>D289AFD7458D852D3D6F01F7F90B978C3D2699F9</PackageCertificateThumbprint>
     <PackageCertificateKeyFile>MetroSurf_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">

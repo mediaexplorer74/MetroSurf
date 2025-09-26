@@ -17,9 +17,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Popups;
 using Windows.System;
-//using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.Web.Http;
+using Windows.UI.Popups;
 
 
 namespace MetroSurf_8._1
@@ -77,11 +77,54 @@ namespace MetroSurf_8._1
 
         private async void LumiaBrowserX_NavigationStarting(object sender, WebViewNavigationStartingEventArgs e)
         {
-            if (this.isLoadingCustomContent || !this.IsNewPageNavigation(e.Uri?.ToString() ?? ""))
+            if (this.isLoadingCustomContent || !this.IsNewPageNavigation(e.Uri?.OriginalString ?? ""))
                 return;
             e.Cancel = true;
             await this.LoadCustomContent(e.Uri.ToString());
         }
+
+        private async void LumiaBrowserX_NavigationCompleted(object sender, WebViewNavigationCompletedEventArgs e)
+        {
+            if (this.htmlToInject == null)
+                return;
+            this.AddressBar.Text = e.Uri.ToString();
+            this.currentLoadedUrl = e.Uri.ToString();
+            string htmlToInject = this.htmlToInject;
+            List<MainPage.ScriptInfo> scripts = this.ExtractScripts(htmlToInject);
+            List<MainPage.LinkInfo> links = this.ExtractLinks(htmlToInject);
+            string str = this.EscapeForJS(this.StripScriptsAndLinks(htmlToInject));
+            try
+            {
+                await this.LumiaBrowserX.InvokeScriptAsync("eval", new[]
+                {
+                    string.Format("\n    try {{\n        document.documentElement.outerHTML = '<html>' + '{0}' + '</html>';\n    }} catch(e) {{\n        // Fallback to creating new document\n        var newDoc = document.implementation.createHTMLDocument('');\n        newDoc.documentElement.innerHTML = '{1}';\n        document.replaceChild(document.importNode(newDoc.documentElement, true), document.documentElement);\n    }}\n", (object)str, (object)str)
+                });
+
+                foreach (MainPage.LinkInfo linkInfo in links)
+                {
+                    await this.LumiaBrowserX.InvokeScriptAsync("eval", new[]
+                    {
+                        string.Format("\r\nvar link = document.createElement('link');\r\n{0}\r\nif (document.head) document.head.appendChild(link);\r\n", (object)string.Join("\n", linkInfo.Attributes.Select<KeyValuePair<string, string>, string>((Func<KeyValuePair<string, string>, string>)(attr => string.Format("link.setAttribute('{0}', '{1}');", (object)attr.Key, (object)this.EscapeForJS(attr.Value))))))
+                    });
+                }
+
+                foreach (MainPage.ScriptInfo scriptInfo in scripts)
+                {
+                    await this.LumiaBrowserX.InvokeScriptAsync("eval", new[]
+                    {
+                        string.Format("\r\nvar script = document.createElement('script');\r\n{0}\r\n{1}\r\nif (document.head) document.head.appendChild(script);\r\n", (object)string.Join("\n", scriptInfo.Attributes.Select<KeyValuePair<string, string>, string>((Func<KeyValuePair<string, string>, string>)(attr => string.Format("script.setAttribute('{0}', '{1}');", (object)attr.Key, (object)this.EscapeForJS(attr.Value))))), string.IsNullOrEmpty(scriptInfo.InnerText) ? (object)"" : (object)string.Format("script.text = '{0}';", (object)this.EscapeForJS(scriptInfo.InnerText)))
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                //int num = (int)MessageBox.Show("Script injection error: " + ex.Message);
+                Debug.WriteLine("Script injection error: " + ex.Message);
+            }
+            this.htmlToInject = (string)null;
+            this.isLoadingCustomContent = false;
+        }
+
 
         private void MenuButton_Click(object sender, RoutedEventArgs e)
         {
@@ -143,10 +186,12 @@ namespace MetroSurf_8._1
         }*/
 
 
-        private async void LumiaBrowserX_NavigationCompleted(object sender, WebViewNavigationCompletedEventArgs e)
-        {
-            if (this.htmlToInject == null)
-                return;
+        
+
+    private async void LumiaBrowserX_LoadCompleted(object sender, WebViewNavigationCompletedEventArgs e)
+    {
+        if (this.htmlToInject == null)
+            return;
             this.AddressBar.Text = e.Uri.ToString();
             this.currentLoadedUrl = e.Uri.ToString();
             string htmlToInject = this.htmlToInject;
@@ -155,30 +200,31 @@ namespace MetroSurf_8._1
             string str = this.EscapeForJS(this.StripScriptsAndLinks(htmlToInject));
             try
             {
-                await this.LumiaBrowserX.InvokeScriptAsync("eval", new[]
-                {
+                this.LumiaBrowserX.InvokeScript("eval", new[] 
+                { 
                     string.Format("\n    try {{\n        document.documentElement.outerHTML = '<html>' + '{0}' + '</html>';\n    }} catch(e) {{\n        // Fallback to creating new document\n        var newDoc = document.implementation.createHTMLDocument('');\n        newDoc.documentElement.innerHTML = '{1}';\n        document.replaceChild(document.importNode(newDoc.documentElement, true), document.documentElement);\n    }}\n", (object)str, (object)str)
                 });
 
                 foreach (MainPage.LinkInfo linkInfo in links)
                 {
-                    await this.LumiaBrowserX.InvokeScriptAsync("eval", new[]
-                    {
+                    this.LumiaBrowserX.InvokeScript("eval", new[] 
+                    { 
                         string.Format("\r\nvar link = document.createElement('link');\r\n{0}\r\nif (document.head) document.head.appendChild(link);\r\n", (object)string.Join("\n", linkInfo.Attributes.Select<KeyValuePair<string, string>, string>((Func<KeyValuePair<string, string>, string>)(attr => string.Format("link.setAttribute('{0}', '{1}');", (object)attr.Key, (object)this.EscapeForJS(attr.Value))))))
                     });
                 }
                 
                 foreach (MainPage.ScriptInfo scriptInfo in scripts)
                 {
-                    await this.LumiaBrowserX.InvokeScriptAsync("eval", new[]
-                    {
-                        string.Format("\r\nvar script = document.createElement('script');\r\n{0}\r\n{1}\r\nif (document.head) document.head.appendChild(script);\r\n", (object)string.Join("\n", scriptInfo.Attributes.Select<KeyValuePair<string, string>, string>((Func<KeyValuePair<string, string>, string>)(attr => string.Format("script.setAttribute('{0}', '{1}');", (object)attr.Key, (object)this.EscapeForJS(attr.Value))))), string.IsNullOrEmpty(scriptInfo.InnerText) ? (object)"" : (object)string.Format("script.text = '{0}';", (object)this.EscapeForJS(scriptInfo.InnerText)))
+                    this.LumiaBrowserX.InvokeScript("eval", new[] 
+                    { 
+                        string.Format("\r\nvar script = document.createElement('script');\r\n{0}\r\n{1}\r\nif (document.head) document.head.appendChild(script);\r\n", (object)string.Join("\n", scriptInfo.Attributes.Select<KeyValuePair<string, string>, string>((Func<KeyValuePair<string, string>, string>)(attr => string.Format("script.setAttribute('{0}', '{1}');", (object)attr.Key, (object)this.EscapeForJS(attr.Value))))), string.IsNullOrEmpty(scriptInfo.InnerText) ? (object)"" : (object)string.Format("script.text = '{0}';", (object)this.EscapeForJS(scriptInfo.InnerText))) 
                     });
-                }
+                }               
             }
             catch (Exception ex)
             {
-                //int num = (int)MessageBox.Show("Script injection error: " + ex.Message);
+                Debug.WriteLine("Script injection error: " + ex.Message);
+                await new MessageDialog("Script injection error: " + ex.Message, "MetroSurf Error").ShowAsync();
                 Debug.WriteLine("Script injection error: " + ex.Message);
             }
             this.htmlToInject = (string)null;

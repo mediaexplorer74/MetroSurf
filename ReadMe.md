@@ -1,9 +1,9 @@
-# MetroSurf v 1.0.1 - main branch  (pre-alpha)
+# MetroSurf v 1.0.2 - dev branch  (pre-alpha)
 ![](/Images/logo.png)
 
-MetroSurf WP8 edition v 1.0.1-alpha decomp. JetBrains DotPeek used.
+MetroSurf WP8 edition v 1.0.1-alpha decomp. & little re-dev. :) 
 
-
+Attention: the code in the _dev_ branch may not always be successfully compiled. This branch is for the process of developing, refining, disassembling, and assembling this and that. If there is some stability, then it is in the _master_ branch 
 
 ## Screenshots
 ![](/Images/sshot01.png)

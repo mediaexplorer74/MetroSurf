@@ -3,5 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:local="clr-namespace:MetroSurf_8._1">
 <Application.Resources>
+  <!--local:LocalizedStrings x:Key="LocalizedStrings"/-->
 </Application.Resources>
 </Application>
