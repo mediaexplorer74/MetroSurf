@@ -9,12 +9,12 @@
   <Identity
     Name="ME.MetroSurfV1"
     Publisher="CN=Admin"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
-  <mp:PhoneIdentity PhoneProductId="8d88a8d0-8578-463a-9eeb-e2a5b9383a30" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="6a97985a-9bd5-4cb0-adc7-30a081403b0b" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>MetroSurf v1.0.0</DisplayName>
+    <DisplayName>MetroSurf v1.0.1</DisplayName>
     <PublisherDisplayName>Admin</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -30,12 +30,12 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="VPN.App">
+      EntryPoint="MetroSurf_8._1.App">
       <uap:VisualElements
-        DisplayName="MetroSurf 1.0.0"
+        DisplayName="MetroSurf 1.0.1"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
-        Description="VPN"
+        Description="MetroSurf WP8.1-to-UWP porting"
         BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
@@ -43,21 +43,8 @@
           <uap:Rotation Preference="landscape"/>
           <uap:Rotation Preference="portrait"/>
           <uap:Rotation Preference="landscapeFlipped"/>
-          <uap:Rotation Preference="portraitFlipped"/>
-        </uap:InitialRotationPreference>
+          <uap:Rotation Preference="portraitFlipped"/></uap:InitialRotationPreference>
       </uap:VisualElements>
-
-      <!-- Extensions must be declared inside Application, not inside Capabilities -->
-      <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="VPN.BackgroundAgent.UpdateApplicationTileTask">
-          <BackgroundTasks>
-            <!-- Declare the task types you will use. Example: systemEvent for SystemTrigger and timer for maintenance timers -->
-            <Task Type="systemEvent"/>
-            <Task Type="timer"/>
-          </BackgroundTasks>
-        </Extension>
-      </Extensions>
-
     </Application>
   </Applications>
 

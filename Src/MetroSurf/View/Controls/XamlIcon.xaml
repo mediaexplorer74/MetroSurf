@@ -1,9 +1,0 @@
-<UserControl
-    x:Class="VPN.View.Controls.XamlIcon"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:VPN.View.Controls">
-    <Grid x:Name="LayoutRootGrid">
-        <!-- Placeholder for vector icon content -->
-    </Grid>
-</UserControl>

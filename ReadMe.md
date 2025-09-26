@@ -1,28 +1,28 @@
-# MetroSurf v xx.xx - main branch
+# MetroSurf v 1.0.1 - main branch  (pre-alpha)
 ![](/Images/logo.png)
 
 MetroSurf WP8 edition v 1.0.1-alpha decomp. JetBrains DotPeek used.
 
-## Screenshot
+
+
+## Screenshots
 ![](/Images/sshot01.png)
+![](/Images/sshot02.png)
 
 # Project Overview
 Repair & stabilize MetroSurf build
 
 # Current Progress
-- Исправлены MetroLog.csproj (пути к Strings.cs, удалены атрибуты [DebuggerNonUserCode] в исходниках).
-- Исправлен NotificationsExtensions.csproj (удалены ссылки на отсутствующие файлы, включая IToastAudio.cs).
-- Удалены/исправлены пустые атрибуты [MethodImpl] в TileContentFactory.cs, заменены на [MethodImpl(MethodImplOptions.InternalCall)] для устранения CS7036.
-- Сборка решения проходила до конфликтов пакетов NU1107.
 - Solution prepared as UWP one but 100500 errors still here/there.
 - Newest Visual Studio 2026 compatibility only (2022 -- idk... try to rename MetroSurf.slnx to MetroSurf.sln)
 - WP8 - > UWP porting started with AI help (Copilot / ChatGPT5-mini in VS 2026 Insiders IDE)
 - Min. Win. SDK used: 15063
+- Pre-alpha state (so, it's not daily driver / not 4 daily use!!!)
 
 
 # Goals
-- Устранить "физические "ошибки компиляции - ok
-- Устранить "логические "ошибки - failed (black screen & app crash after window resize)
+- Fix "physical" build errors - failed
+- Fix "logical" build errors - failed 
 
 
 ## References / Links
@@ -34,6 +34,6 @@ Repair & stabilize MetroSurf build
 
 ## ..
 
-[m][e] 26 Sep 2025
+[m][e] Sep, 26 2025
 
 ![](/Images/footer.png)

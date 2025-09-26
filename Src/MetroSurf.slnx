@@ -5,47 +5,11 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="MetroSurf/MetroSurf.csproj" Id="7cb00ad3-556e-4057-b946-aadbc3fd423b">
+  <Project Path="MetroSurf/MetroSurf.csproj" Id="20554ef7-a066-4c47-918b-21f18b5b2106">
     <Platform Solution="*|ARM" Project="ARM" />
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
     <Platform Solution="*|x86" Project="x86" />
     <Deploy />
-  </Project>
-  <Project Path="MetroLab.Common/MetroLab.Common.csproj" Id="6a51639d-0f43-4082-ba59-29fd498f15ae">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-  </Project>
-  <Project Path="NotificationsExtensions/NotificationsExtensions.csproj" Id="e96b73a4-881a-4f74-810e-9e58669f5758">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-  </Project>
-  <Project Path="VPN.BackgroundAgent/VPN.BackgroundAgent.csproj" Id="8caadbd7-656b-4591-aad4-9bcafde30e62">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-  </Project>
-  <Project Path="VPN.Localization/VPN.Localization.csproj" Id="9b10751c-d63e-4cf0-8ca2-3674de439169">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-  </Project>
-  <Project Path="VPN.Model/VPN.Model.csproj" Id="0f987662-765f-4b43-9fe9-e46d82be9203">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-  </Project>
-  <Project Path="VPN.ViewModel/VPN.ViewModel.csproj" Id="fd51defd-0e3f-4475-8558-d7910dfe780c">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
   </Project>
 </Solution>
