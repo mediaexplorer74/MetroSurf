@@ -24,10 +24,12 @@ using Windows.UI.Xaml.Navigation;
 namespace MetroLab.Common
 {
   [WebHostHidden]
-  public class MvvmPage : Page//, ILoadedOrUpdatedSuccessfullyListener
+  public class MvvmPage : Page, ILoadedOrUpdatedSuccessfullyListener
   {
     private List<Control> _layoutAwareControls;
-    public static readonly DependencyProperty NavigationTransitionProperty = DependencyProperty.Register(nameof (NavigationTransition), typeof (MetroLabNavigationTransitionInfo), typeof (MvvmPage), (PropertyMetadata) null);
+    public static readonly DependencyProperty NavigationTransitionProperty 
+            = DependencyProperty.Register(nameof (NavigationTransition), 
+                typeof (MetroLabNavigationTransitionInfo), typeof (MvvmPage), (PropertyMetadata) null);
     private IPageViewModel _viewModel;
     private bool _firstNavigation = true;
 
@@ -140,24 +142,24 @@ namespace MetroLab.Common
       AcceleratorKeyEventArgs args)
     {
       VirtualKey virtualKey = args.VirtualKey;
-      if (args.EventType != 4 && args.EventType != null || virtualKey != 37 && virtualKey != 39 && virtualKey != 166 && virtualKey != 167)
+      // Handle Alt+Left/Right for back/forward without relying on AcceleratorKeyEventType enums
+      if (virtualKey != VirtualKey.Left && virtualKey != VirtualKey.Right)
         return;
       CoreWindow coreWindow = Window.Current.CoreWindow;
-      CoreVirtualKeyStates virtualKeyStates = (CoreVirtualKeyStates) 1;
-      bool flag1 = (coreWindow.GetKeyState((VirtualKey) 18) & virtualKeyStates) == virtualKeyStates;
-      bool flag2 = (coreWindow.GetKeyState((VirtualKey) 17) & virtualKeyStates) == virtualKeyStates;
-      bool flag3 = (coreWindow.GetKeyState((VirtualKey) 16) & virtualKeyStates) == virtualKeyStates;
-      bool flag4 = !flag1 && !flag2 && !flag3;
-      bool flag5 = flag1 && !flag2 && !flag3;
-      if (virtualKey == 166 & flag4 || virtualKey == 37 & flag5)
+      CoreVirtualKeyStates altState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Menu) & CoreVirtualKeyStates.Down;
+      CoreVirtualKeyStates ctrlState = coreWindow.GetKeyState(VirtualKey.Control) & CoreVirtualKeyStates.Down;
+      CoreVirtualKeyStates shiftState = coreWindow.GetKeyState(VirtualKey.Shift) & CoreVirtualKeyStates.Down;
+      bool alt = altState == CoreVirtualKeyStates.Down;
+      bool ctrl = ctrlState == CoreVirtualKeyStates.Down;
+      bool shift = shiftState == CoreVirtualKeyStates.Down;
+      bool altOnly = alt && !ctrl && !shift;
+      if (virtualKey == VirtualKey.Left && altOnly)
       {
         args.Handled = true;
         this.GoBack((object) this, new RoutedEventArgs());
       }
-      else
+      else if (virtualKey == VirtualKey.Right && altOnly)
       {
-        if (!(virtualKey == 167 & flag4) && !(virtualKey == 39 & flag5))
-          return;
         args.Handled = true;
         this.GoForward((object) this, new RoutedEventArgs());
       }
@@ -194,12 +196,12 @@ namespace MetroLab.Common
       this._layoutAwareControls.Add(control);
     }
 
-        private void WindowSizeChanged(object sender, WindowSizeChangedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+    private void WindowSizeChanged(object sender, WindowSizeChangedEventArgs e)
+    {
+        //throw new NotImplementedException();
+    }
 
-        private void StopLayoutUpdates(object sender, RoutedEventArgs e)
+    private void StopLayoutUpdates(object sender, RoutedEventArgs e)
     {
       if (!(sender is Control control) || this._layoutAwareControls == null)
         return;

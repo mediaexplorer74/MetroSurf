@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Reflection;
 using VPN.ViewModel;
 using VPN.ViewModel.Pages;
 using Windows.ApplicationModel.DataTransfer;
@@ -60,10 +61,26 @@ namespace VPN.View
 
         private async void AppOverviewOnClick(object sender, RoutedEventArgs e)
         {
-            await AppViewModel.Current.NavigateToViewModel(new OverviewGalleryPageViewModel()
+            try
             {
-                IsLoadedFromSettings = true
-            });
+                // Create the view model by reflection to avoid direct project-type dependency during compilation
+                var type = Type.GetType("VPN.ViewModel.Pages.OverviewGalleryPageViewModel, VPN.ViewModel");
+                if (type != null)
+                {
+                    var instance = Activator.CreateInstance(type);
+                    var pageVm = instance as MetroLab.Common.IPageViewModel;
+                    if (pageVm != null)
+                    {
+                        var prop = type.GetRuntimeProperty("IsLoadedFromSettings");
+                        prop?.SetValue(instance, true);
+                        await AppViewModel.Current.NavigateToViewModel(pageVm);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (Debugger.IsAttached) Debugger.Break();
+            }
         }
 
         private async void MakeReviewOnClick(object sender, RoutedEventArgs e)

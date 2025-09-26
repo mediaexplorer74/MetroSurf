@@ -103,13 +103,10 @@ namespace VPN.ViewModel
     {
       string password = Constants.GetDeviceID() + Constants.GetDeviceModel() + openPartOfPassword + "L,2W~fKo|]*,VFiZ8&n";
       uint num = 10000;
-      string salt1 = salt;
       int iterationCount = (int) num;
       IBuffer ibuffer1;
-      ref IBuffer local1 = ref ibuffer1;
       IBuffer ibuffer2;
-      ref IBuffer local2 = ref ibuffer2;
-      CacheAgent.GenerateKeyMaterial(password, salt1, (uint) iterationCount, out local1, out local2);
+      CacheAgent.GenerateKeyMaterial(password, salt, (uint) iterationCount, out ibuffer1, out ibuffer2);
       byte[] array = CryptographicEngine.Decrypt(SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7).CreateSymmetricKey(ibuffer1), CryptographicBuffer.DecodeFromBase64String(dataToDecrypt), ibuffer2).ToArray();
       return Encoding.UTF8.GetString(array, 0, array.Length);
     }

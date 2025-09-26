@@ -32,14 +32,12 @@ namespace MetroLab.Common
       DependencyObject d,
       DependencyPropertyChangedEventArgs args)
     {
-      Hyperlink hyperlink1 = (Hyperlink) d;
-      // ISSUE: method pointer
-      WindowsRuntimeMarshal.RemoveEventHandler<TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>>(new Action<EventRegistrationToken>(hyperlink1.remove_Click), new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>((object) null, __methodptr(HyperlinkOnClick)));
+      if (!(d is Hyperlink hyperlink))
+        return;
+      try { hyperlink.Click -= HyperlinkOnClick; } catch { }
       if (args.NewValue == null)
         return;
-      Hyperlink hyperlink2 = hyperlink1;
-      // ISSUE: method pointer
-      WindowsRuntimeMarshal.AddEventHandler<TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>>(new Func<TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>, EventRegistrationToken>(hyperlink2.add_Click), new Action<EventRegistrationToken>(hyperlink2.remove_Click), new TypedEventHandler<Hyperlink, HyperlinkClickEventArgs>((object) null, __methodptr(HyperlinkOnClick)));
+      hyperlink.Click += HyperlinkOnClick;
     }
 
     private static void HyperlinkOnClick(Hyperlink sender, HyperlinkClickEventArgs args)

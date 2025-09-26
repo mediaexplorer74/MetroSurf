@@ -9,15 +9,28 @@ using Windows.ApplicationModel.Resources;
 #nullable disable
 namespace MetroLab.Common
 {
-  public static class CommonLocalizedResources
-  {
-    private static ResourceLoader _resourceLoader;
-
-    public static string GetLocalizedString(string resourceName)
+    public static class CommonLocalizedResources
     {
-      if (CommonLocalizedResources._resourceLoader == null)
-        CommonLocalizedResources._resourceLoader = ResourceLoader.GetForViewIndependentUse("MetroLab.Common/Resources");
-      return CommonLocalizedResources._resourceLoader.GetString(resourceName);
+        private static ResourceLoader _resourceLoader;
+
+        private static ResourceLoader Loader
+            => _resourceLoader ??= CreateLoader();
+
+        private static ResourceLoader CreateLoader()
+        {
+            try
+            {
+                // try component-specific map first
+                return ResourceLoader.GetForViewIndependentUse("MetroLab.Common/Resources");
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                // fallback to app-level resources
+                return ResourceLoader.GetForViewIndependentUse();
+            }
+        }
+
+        public static string GetLocalizedString(string resourceName) =>
+            Loader.GetString(resourceName);
     }
-  }
 }

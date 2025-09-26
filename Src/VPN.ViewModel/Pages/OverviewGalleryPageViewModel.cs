@@ -4,6 +4,7 @@
 // MVID: 71614725-2E26-43C3-AAA3-3648952758ED
 // Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\VPN.ViewModel.dll
 
+using MetroLab.Common;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ using VPN.ViewModel.Items;
 namespace VPN.ViewModel.Pages
 {
   [DataContract]
-  public class OverviewGalleryPageViewModel : PageViewModel
+  public class OverviewGalleryPageViewModel : MetroLab.Common.PageViewModel
   {
     private List<OverviewPageViewModel> _items;
 

@@ -1,14 +1,13 @@
-<mlc:MvvmPage
+<common:MvvmPage
     x:Class="VPN.View.GuideGalleryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mlc="using:MetroLab.Common"
     xmlns:local="using:VPN.View"
-    >
+    xmlns:common="using:MetroLab.Common" >
     <Grid x:Name="LayoutRoot">
         <FlipView x:Name="InnerFlipView" SelectionChanged="FlipViewSelectionChanged">
             <!-- Items bound by ViewModel -->
         </FlipView>
         <Button Content="Next" HorizontalAlignment="Right" VerticalAlignment="Bottom" Tapped="Next"/>
     </Grid>
-</mlc:MvvmPage>
+</common:MvvmPage>

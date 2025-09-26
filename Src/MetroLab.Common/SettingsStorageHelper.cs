@@ -13,15 +13,23 @@ namespace MetroLab.Common
 {
   public static class SettingsStorageHelper
   {
-    public static T GetSetting<T>(string key, T defaultValue = null)
+    public static T GetSetting<T>(string key, T defaultValue)
     {
       IPropertySet values = ApplicationData.Current.LocalSettings.Values;
-      return !((IDictionary<string, object>) values).ContainsKey(key) || !(((IDictionary<string, object>) values)[key] is T) ? defaultValue : (T) ((IDictionary<string, object>) values)[key];
+      if (!((IDictionary<string, object>)values).ContainsKey(key))
+        return defaultValue;
+      var obj = ((IDictionary<string, object>)values)[key];
+      return obj is T t ? t : defaultValue;
+    }
+
+    public static T GetSetting<T>(string key)
+    {
+      return GetSetting<T>(key, default(T));
     }
 
     public static void SetSetting(string key, object value)
     {
-      ((IDictionary<string, object>) ApplicationData.Current.LocalSettings.Values)[key] = value;
+      ((IDictionary<string, object>)ApplicationData.Current.LocalSettings.Values)[key] = value;
     }
   }
 }

@@ -1,13 +1,6 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: VPN.View.MainPage
-// Assembly: VPN, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 9341524F-1843-4B25-9300-CCE3043D39C8
-// Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\VPN.exe
-
 using MetroLab.Common;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using VPN.ViewModel;
 using VPN.ViewModel.Items;
@@ -42,8 +35,9 @@ namespace VPN.View
                 NetworkStatusChangedEventHandler handler = new NetworkStatusChangedEventHandler(this.OnNetworkStatusChange);
                 if (this.registeredNetworkStatusNotif)
                     return;
-                WindowsRuntimeMarshal.AddEventHandler<NetworkStatusChangedEventHandler>(
-                    new Func<NetworkStatusChangedEventHandler, EventRegistrationToken>(NetworkInformation.add_NetworkStatusChanged), new Action<EventRegistrationToken>(NetworkInformation.remove_NetworkStatusChanged), handler);
+
+                // Subscribe to NetworkStatusChanged using standard event pattern
+                NetworkInformation.NetworkStatusChanged += handler;
                 this.registeredNetworkStatusNotif = true;
             }
             catch (Exception ex)
@@ -91,6 +85,65 @@ namespace VPN.View
         private async void SelectProposition(object sender, ItemClickEventArgs e)
         {
             ((MainPageViewModel)this.ViewModel).SelectProposition((PropositionViewModel)e.ClickedItem);
+        }
+    }
+}
+
+// Added partial classes to supply event handlers expected by XAML-generated code
+namespace VPN.View
+{
+    public sealed partial class OverviewGalleryPage : BasePage
+    {
+        private void InnerFlipView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // keep as no-op or update UI as needed
+        }
+
+        private void Next(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            if (this.InnerFlipView != null)
+            {
+                var idx = this.InnerFlipView.SelectedIndex;
+                if (idx < this.InnerFlipView.Items?.Count - 1)
+                    this.InnerFlipView.SelectedIndex = idx + 1;
+            }
+        }
+    }
+
+    public sealed partial class GuideGalleryPage : BasePage
+    {
+        private void FlipViewSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // placeholder for selection change logic
+        }
+
+        private void Next(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            if (this.InnerFlipView != null)
+            {
+                var idx = this.InnerFlipView.SelectedIndex;
+                if (idx < this.InnerFlipView.Items?.Count - 1)
+                    this.InnerFlipView.SelectedIndex = idx + 1;
+            }
+        }
+    }
+
+    public sealed partial class LoginKeepSolidIDPage : BasePage
+    {
+        private void LoginTextBoxOnKeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                PasswordBox?.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void PasswordBoxOnKeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                Windows.UI.ViewManagement.InputPane.GetForCurrentView()?.TryHide();
+            }
         }
     }
 }

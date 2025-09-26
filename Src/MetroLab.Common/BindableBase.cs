@@ -31,29 +31,24 @@ namespace MetroLab.Common
 
     public void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      BindableBase.\u003C\u003Ec__DisplayClass4_0 cDisplayClass40 = new BindableBase.\u003C\u003Ec__DisplayClass4_0();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass40.\u003C\u003E4__this = this;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass40.propertyName = propertyName;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass40.handler = this.PropertyChanged;
-      // ISSUE: reference to a compiler-generated field
-      if (cDisplayClass40.handler == null)
+      var handler = this.PropertyChanged;
+      if (handler == null)
         return;
+
       CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
-      if (dispatcher.HasThreadAccess)
+      var args = new PropertyChangedEventArgs(propertyName);
+      if (dispatcher != null && !dispatcher.HasThreadAccess)
       {
-        // ISSUE: reference to a compiler-generated field
-        // ISSUE: reference to a compiler-generated field
-        cDisplayClass40.handler((object) this, new PropertyChangedEventArgs(cDisplayClass40.propertyName));
+        // marshal to UI thread
+        var capturedHandler = handler;
+        dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(() =>
+        {
+          try { capturedHandler(this, args); } catch { }
+        }));
       }
       else
       {
-        // ISSUE: method pointer
-        dispatcher.RunAsync((CoreDispatcherPriority) 0, new DispatchedHandler((object) cDisplayClass40, __methodptr(\u003COnPropertyChanged\u003Eb__0)));
+        try { handler(this, args); } catch { }
       }
     }
   }

@@ -10,6 +10,7 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using System;
 
 #nullable disable
 namespace MetroLab.Common
@@ -26,26 +27,30 @@ namespace MetroLab.Common
       string md5Async;
       using (Stream fileStream = await ((IStorageFile) file).OpenStreamForReadAsync())
       {
-        using (IInputStream inputStream = fileStream.AsInputStream())
-          md5Async = await Utils.CalculateMd5Async(inputStream);
+        md5Async = await CalculateMd5FromStreamAsync(fileStream);
       }
       return md5Async;
     }
 
+    private static async Task<string> CalculateMd5FromStreamAsync(Stream stream)
+    {
+      var alg = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+      using (var ms = new MemoryStream())
+      {
+        await stream.CopyToAsync(ms);
+        var buffer = ms.ToArray();
+        var cbuf = CryptographicBuffer.CreateFromByteArray(buffer);
+        var hash = alg.HashData(cbuf);
+        return CryptographicBuffer.EncodeToHexString(hash);
+      }
+    }
+
     public static async Task<string> CalculateMd5Async(IInputStream inputStream)
     {
-      HashAlgorithmProvider algorithmProvider = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
-      Buffer buffer = new Buffer(65536U);
-      CryptographicHash hash = algorithmProvider.CreateHash();
-      while (true)
+      using (var stream = inputStream.AsStreamForRead())
       {
-        IBuffer ibuffer = await inputStream.ReadAsync((IBuffer) buffer, 65536U, (InputStreamOptions) 0);
-        if (buffer.Length > 0U)
-          hash.Append((IBuffer) buffer);
-        else
-          break;
+        return await CalculateMd5FromStreamAsync(stream);
       }
-      return CryptographicBuffer.EncodeToHexString(hash.GetValueAndReset());
     }
   }
 }

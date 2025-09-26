@@ -115,12 +115,12 @@ namespace VPN.ViewModel.Pages
       }
     }
 
-    protected override Task<CacheState> LoadFromCacheAsync()
+    protected Task<CacheState> LoadFromCacheAsync()
     {
       string keepSolidEmail = AutoLoginAgent.Current.GetKeepSolidEmail();
       if (keepSolidEmail != null)
         this.Email = keepSolidEmail;
-      return base.LoadFromCacheAsync();
+      return Task.FromResult(CacheState.Empty);
     }
   }
 }

@@ -75,8 +75,8 @@ namespace VPN.ViewModel.Http
       try
       {
         LauncherOptions launcherOptions = new LauncherOptions();
-        launcherOptions.put_FallbackUri(new Uri(FacebookAuthenticationAgent.GetFacebookUrlForIE()));
-        result = await Launcher.LaunchUriAsync(new Uri(string.Format("fbconnect://authorize?client_id={0}&scope={1}&redirect_uri={2}", (object) "566235876818089", (object) CredentialsFacebook.Scope, (object) "msft-69b97f207b3b457b9e153c6a3194ce71://authorize")), launcherOptions);
+        launcherOptions.FallbackUri = new Uri(FacebookAuthenticationAgent.GetFacebookUrlForIE());
+        result = await Launcher.LaunchUriAsync(new Uri(string.Format("fbconnect://authorize?client_id={0}&scope={1}&redirect_uri={2}", "566235876818089", CredentialsFacebook.Scope, "msft-69b97f207b3b457b9e153c6a3194ce71://authorize")), launcherOptions);
       }
       catch
       {
@@ -150,7 +150,7 @@ namespace VPN.ViewModel.Http
 
     private async Task<CredentialsFacebook> GetSession(WebAuthenticationResult result)
     {
-      if (result.ResponseStatus == null)
+      if (result.ResponseStatus == WebAuthenticationStatus.Success)
       {
         string accessToken;
         string expiresIn;
@@ -163,9 +163,9 @@ namespace VPN.ViewModel.Http
           Email = email
         };
       }
-      if (result.ResponseStatus == 2)
+      if (result.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
         throw new Exception("Error http");
-      if (result.ResponseStatus == 1)
+      if (result.ResponseStatus == WebAuthenticationStatus.UserCancel)
         throw new Exception("User Canceled.");
       return (CredentialsFacebook) null;
     }

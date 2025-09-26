@@ -48,7 +48,7 @@ namespace VPN.ViewModel.Http
     public async Task<bool> GetSession(WebAuthenticationBrokerContinuationEventArgs args)
     {
       WebAuthenticationResult result = args.WebAuthenticationResult;
-      if (result.ResponseStatus == null)
+      if (result.ResponseStatus == WebAuthenticationStatus.Success)
       {
         string code = this.GetCode(result.ResponseData);
         CredentialsGoogle token = await GoogleAuthenticationAgent.GetToken(code);
@@ -57,8 +57,9 @@ namespace VPN.ViewModel.Http
         AutoLoginAgent.Current.CredentialsGoogle = token;
         return true;
       }
-      WebAuthenticationStatus authenticationStatus = result.ResponseStatus != 2 ? result.ResponseStatus : throw new WebException();
-      return false;
+      if (result.ResponseStatus == WebAuthenticationStatus.UserCancel)
+        return false;
+      throw new WebException();
     }
 
     private static async Task<CredentialsGoogle> GetToken(string code)
@@ -73,7 +74,7 @@ namespace VPN.ViewModel.Http
       stringBuilder.Append(Uri.EscapeDataString("http://localhost"));
       stringBuilder.Append("&grant_type=authorization_code");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://accounts.google.com/o/oauth2/token", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) new HttpStringContent(stringBuilder.ToString(), (UnicodeEncoding) 0, "application/x-www-form-urlencoded"));
+      httpRequestMessage.Content = (IHttpContent) new HttpStringContent(stringBuilder.ToString(), Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/x-www-form-urlencoded");
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       CredentialsGoogle oauthcredentialsGoogle = (CredentialsGoogle) new DataContractJsonSerializer(typeof (CredentialsGoogle)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -103,7 +104,7 @@ namespace VPN.ViewModel.Http
       stringBuilder.Append(Uri.EscapeDataString("VqZR9tiTyrP6-UY9G48_EJTg"));
       stringBuilder.Append("&grant_type=refresh_token");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://www.googleapis.com/oauth2/v3/token", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) new HttpStringContent(stringBuilder.ToString(), (UnicodeEncoding) 0, "application/x-www-form-urlencoded"));
+      httpRequestMessage.Content = (IHttpContent) new HttpStringContent(stringBuilder.ToString(), Windows.Storage.Streams.UnicodeEncoding.Utf8, "application/x-www-form-urlencoded");
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       CredentialsGoogle credentialsGoogle = (CredentialsGoogle) new DataContractJsonSerializer(typeof (CredentialsGoogle)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());

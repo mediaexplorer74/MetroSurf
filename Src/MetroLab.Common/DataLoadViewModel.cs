@@ -15,6 +15,7 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
+using Windows.ApplicationModel.DataTransfer;
 
 #nullable disable
 namespace MetroLab.Common
@@ -48,7 +49,8 @@ namespace MetroLab.Common
 
     protected DataLoadViewModel()
     {
-      WindowsRuntimeMarshal.AddEventHandler<NetworkStatusChangedEventHandler>(new Func<NetworkStatusChangedEventHandler, EventRegistrationToken>(NetworkInformation.add_NetworkStatusChanged), new Action<EventRegistrationToken>(NetworkInformation.remove_NetworkStatusChanged), new NetworkStatusChangedEventHandler(this.NetworkInformationOnNetworkStatusChanged));
+      try { NetworkInformation.NetworkStatusChanged -= this.NetworkInformationOnNetworkStatusChanged; } catch { }
+      NetworkInformation.NetworkStatusChanged += this.NetworkInformationOnNetworkStatusChanged;
     }
 
     [DataMember]
@@ -280,7 +282,7 @@ namespace MetroLab.Common
     public static bool GetIsConnectedToNetwork()
     {
       ConnectionProfile connectionProfile = NetworkInformation.GetInternetConnectionProfile();
-      return connectionProfile != null && connectionProfile.GetNetworkConnectivityLevel() == 3;
+      return connectionProfile != null && connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
     }
 
     public void UpdateGlobalIsWorkingOffline()
@@ -319,13 +321,13 @@ namespace MetroLab.Common
 
     public virtual void UnSubscribeFromEvents()
     {
-      WindowsRuntimeMarshal.RemoveEventHandler<NetworkStatusChangedEventHandler>(new Action<EventRegistrationToken>(NetworkInformation.remove_NetworkStatusChanged), new NetworkStatusChangedEventHandler(this.NetworkInformationOnNetworkStatusChanged));
+      try { NetworkInformation.NetworkStatusChanged -= this.NetworkInformationOnNetworkStatusChanged; } catch { }
     }
 
     protected virtual async Task<bool> LoadAsync()
     {
-      bool flag;
-      return flag;
+      // default implementation returns false
+      return false;
     }
 
     protected Task<bool> TryLoadAsync()
@@ -404,7 +406,7 @@ namespace MetroLab.Common
       }
     }
 
-    public async Task InitializeAsync()
+    public virtual async Task InitializeAsync()
     {
       await (this._initializeTask ?? (this._initializeTask = this.InitializeInnerAsync()));
     }
@@ -458,11 +460,11 @@ namespace MetroLab.Common
 
     protected virtual async Task<bool> UpdateInnerAsync()
     {
-      bool flag;
-      return flag;
+      // default implementation returns false
+      return false;
     }
 
-    public async Task UpdateAsync()
+    public virtual async Task UpdateAsync()
     {
       try
       {
@@ -481,9 +483,30 @@ namespace MetroLab.Common
       }
     }
 
+    public virtual async Task RequestData(DataTransferManager manager, DataRequestedEventArgs args)
+    {
+      await Task.CompletedTask;
+    }
+
+    public virtual async Task OnSerializingToStorageAsync()
+    {
+      await Task.CompletedTask;
+    }
+
+    public virtual async Task OnSerializedToStorageAsync()
+    {
+      await Task.CompletedTask;
+    }
+
+    public virtual async Task OnNavigatingAsync()
+    {
+      await Task.CompletedTask;
+    }
+
     public virtual async Task OnDeserializedFromStorageAsync()
     {
-      WindowsRuntimeMarshal.AddEventHandler<NetworkStatusChangedEventHandler>(new Func<NetworkStatusChangedEventHandler, EventRegistrationToken>(NetworkInformation.add_NetworkStatusChanged), new Action<EventRegistrationToken>(NetworkInformation.remove_NetworkStatusChanged), new NetworkStatusChangedEventHandler(this.NetworkInformationOnNetworkStatusChanged));
+      try { NetworkInformation.NetworkStatusChanged -= this.NetworkInformationOnNetworkStatusChanged; } catch { }
+      NetworkInformation.NetworkStatusChanged += this.NetworkInformationOnNetworkStatusChanged;
     }
   }
 }

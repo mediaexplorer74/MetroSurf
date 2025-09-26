@@ -157,36 +157,31 @@ namespace MetroLab.Common
 
     private async void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      AutoConvertingObservableCollection<T, TSource>.\u003C\u003Ec__DisplayClass35_1 cDisplayClass351 = new AutoConvertingObservableCollection<T, TSource>.\u003C\u003Ec__DisplayClass35_1();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass351.\u003C\u003E4__this = this;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass351.args = args;
       List<KeyValuePair<NotifyCollectionChangedEventHandler, CoreDispatcher>> list;
       lock (this._collectionChanged)
-        list = this._collectionChanged.ToList<KeyValuePair<NotifyCollectionChangedEventHandler, CoreDispatcher>>();
-      foreach (KeyValuePair<NotifyCollectionChangedEventHandler, CoreDispatcher> keyValuePair in list)
+        list = this._collectionChanged.ToList();
+
+      foreach (var kv in list)
       {
-        CoreDispatcher coreDispatcher = keyValuePair.Value;
-        if (coreDispatcher != null)
+        var handler = kv.Key;
+        var dispatcher = kv.Value;
+        if (dispatcher == null)
         {
-          if (coreDispatcher.HasThreadAccess)
+          try { handler(this, args); } catch { if (Debugger.IsAttached) Debugger.Break(); }
+        }
+        else if (dispatcher.HasThreadAccess)
+        {
+          try { handler(this, args); } catch { if (Debugger.IsAttached) Debugger.Break(); }
+        }
+        else
+        {
+          // dispatch to UI thread
+          var capturedHandler = handler;
+          var capturedArgs = args;
+          await dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(() =>
           {
-            // ISSUE: reference to a compiler-generated field
-            keyValuePair.Key((object) this, cDisplayClass351.args);
-          }
-          else
-          {
-            // ISSUE: object of a compiler-generated type is created
-            // ISSUE: method pointer
-            await coreDispatcher.RunAsync((CoreDispatcherPriority) 0, new DispatchedHandler((object) new AutoConvertingObservableCollection<T, TSource>.\u003C\u003Ec__DisplayClass35_0()
-            {
-              CS\u0024\u003C\u003E8__locals1 = cDisplayClass351,
-              item1 = keyValuePair
-            }, __methodptr(\u003COnCollectionChanged\u003Eb__0)));
-          }
+            try { capturedHandler(this, capturedArgs); } catch { if (Debugger.IsAttached) Debugger.Break(); }
+          }));
         }
       }
       this.OnPropertyChanged("Count");

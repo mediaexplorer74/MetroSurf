@@ -42,4 +42,55 @@ namespace NotificationsExtensions.ToastContent
       set => this.m_DismissArgument = value;
     }
   }
+
+  // Added IncomingCallCommands implementation here so it's compiled without modifying the csproj
+  internal sealed class IncomingCallCommands : IIncomingCallCommands
+  {
+    private bool m_Video;
+    private string m_VideoArgument = string.Empty;
+    private bool m_Voice;
+    private string m_VoiceArgument = string.Empty;
+    private bool m_Decline;
+    private string m_DeclineArgument = string.Empty;
+
+    internal IncomingCallCommands()
+    {
+    }
+
+    public bool ShowVideoCommand
+    {
+      get => this.m_Video;
+      set => this.m_Video = value;
+    }
+
+    public string VideoArgument
+    {
+      get => this.m_VideoArgument;
+      set => this.m_VideoArgument = value ?? string.Empty;
+    }
+
+    public bool ShowVoiceCommand
+    {
+      get => this.m_Voice;
+      set => this.m_Voice = value;
+    }
+
+    public string VoiceArgument
+    {
+      get => this.m_VoiceArgument;
+      set => this.m_VoiceArgument = value ?? string.Empty;
+    }
+
+    public bool ShowDeclineCommand
+    {
+      get => this.m_Decline;
+      set => this.m_Decline = value;
+    }
+
+    public string DeclineArgument
+    {
+      get => this.m_DeclineArgument;
+      set => this.m_DeclineArgument = value ?? string.Empty;
+    }
+  }
 }

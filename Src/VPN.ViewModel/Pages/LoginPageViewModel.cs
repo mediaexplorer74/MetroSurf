@@ -135,13 +135,11 @@ namespace VPN.ViewModel.Pages
       }
       else if (this.provider == LoginPageViewModel.SocialNetwork.Facebook)
       {
-        CredentialsFacebook credentialsFacebook;
-        CredentialsFacebook credentialsFacebook1 = credentialsFacebook;
-        credentialsFacebook = await FacebookAuthenticationAgent.Current.Finalize(args);
-        if (await this.TryLoadAsyncInner((Func<Task<bool>>) (async () => await VPNServerAgent.Current.LoginFacebookAsync(credentialsFacebook))))
+        CredentialsFacebook credentialsFacebook = await FacebookAuthenticationAgent.Current.Finalize(args);
+        if (await this.TryLoadAsyncInner((Func<Task<bool>>)(async () => await VPNServerAgent.Current.LoginFacebookAsync(credentialsFacebook))))
         {
           AppViewModel.Current.ClearNavigationStack();
-          await AppViewModel.Current.NavigateToViewModel((IPageViewModel) new MainPageViewModel());
+          await AppViewModel.Current.NavigateToViewModel((IPageViewModel)new MainPageViewModel());
         }
       }
       this.IsLoadingActive = false;
@@ -164,7 +162,7 @@ namespace VPN.ViewModel.Pages
 
     protected override async Task<bool> LoadAsync()
     {
-      this.LoadLocaliztion();
+      this.LoadLocalization();
       if ((string) ((IDictionary<string, object>) ApplicationData.Current.LocalSettings.Values)["RememberPassword"] == "don't remember")
       {
         AutoLoginAgent.Current.CredentialsFacebook = (CredentialsFacebook) null;

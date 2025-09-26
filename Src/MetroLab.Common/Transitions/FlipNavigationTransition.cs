@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -30,62 +29,67 @@ namespace MetroLab.Common.Transitions
       Action onCompleted = null)
     {
       UIElement targetUiElement = ((UserControl) page).Content;
-      PlaneProjection planeProjection1 = new PlaneProjection();
-      planeProjection1.put_CenterOfRotationX(0.0);
-      planeProjection1.put_CenterOfRotationY(0.0);
-      planeProjection1.put_CenterOfRotationZ(-70.0);
-      PlaneProjection planeProjection2 = planeProjection1;
-      targetUiElement.put_Projection((Projection) planeProjection2);
-      targetUiElement.put_CacheMode((CacheMode) new BitmapCache());
-      planeProjection2.put_RotationY(startRotationY);
-      targetUiElement.put_Opacity(startOpacity);
-      Storyboard storyboard1 = new Storyboard();
-      ((Timeline) storyboard1).put_Duration((Duration) TimeSpan.FromMilliseconds(150.0));
-      Storyboard.SetTarget((Timeline) storyboard1, (DependencyObject) targetUiElement);
-      DoubleAnimation doubleAnimation1 = new DoubleAnimation();
-      doubleAnimation1.put_To(new double?(endRotationY));
-      ((Timeline) doubleAnimation1).put_Duration(new Duration(TimeSpan.FromMilliseconds(140.0)));
-      ((Timeline) doubleAnimation1).put_AutoReverse(false);
-      ((Timeline) doubleAnimation1).put_FillBehavior((FillBehavior) 0);
-      doubleAnimation1.put_EasingFunction(easingFunction);
-      doubleAnimation1.put_EnableDependentAnimation(true);
-      DoubleAnimation doubleAnimation2 = doubleAnimation1;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation2, "(UIElement.Projection).(PlaneProjection.RotationY)");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation2);
-      DoubleAnimation doubleAnimation3 = new DoubleAnimation();
-      doubleAnimation3.put_To(new double?(endOpacity));
-      ((Timeline) doubleAnimation3).put_Duration(new Duration(TimeSpan.FromMilliseconds(140.0)));
-      ((Timeline) doubleAnimation3).put_AutoReverse(false);
-      doubleAnimation3.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation3).put_FillBehavior((FillBehavior) 0);
-      doubleAnimation3.put_EasingFunction(easingFunction);
-      DoubleAnimation doubleAnimation4 = doubleAnimation3;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation4, "Opacity");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation4);
-      EventHandler<object> completed = (EventHandler<object>) null;
-      completed = (EventHandler<object>) ((sender, o) =>
+
+      var planeProjection = new PlaneProjection();
+      planeProjection.CenterOfRotationX = 0.0;
+      planeProjection.CenterOfRotationY = 0.0;
+      planeProjection.CenterOfRotationZ = -70.0;
+      targetUiElement.Projection = planeProjection;
+
+      targetUiElement.CacheMode = new BitmapCache();
+      planeProjection.RotationY = startRotationY;
+      targetUiElement.Opacity = startOpacity;
+
+      var storyboard = new Storyboard();
+      storyboard.Duration = new Duration(TimeSpan.FromMilliseconds(150.0));
+      Storyboard.SetTarget(storyboard, targetUiElement);
+
+      var rotationAnim = new DoubleAnimation
       {
-        targetUiElement.put_CacheMode((CacheMode) null);
-        Storyboard storyboard2 = (Storyboard) sender;
-        ((PlaneProjection) targetUiElement.Projection).put_RotationY(endRotationY);
-        targetUiElement.put_Opacity(endOpacity);
-        if (onCompleted != null)
-          onCompleted();
-        // ISSUE: virtual method pointer
-        WindowsRuntimeMarshal.RemoveEventHandler<EventHandler<object>>(new Action<EventRegistrationToken>((object) storyboard2, __vmethodptr(storyboard2, remove_Completed)), completed);
-        storyboard2.Stop();
-      });
-      Storyboard storyboard3 = storyboard1;
-      WindowsRuntimeMarshal.AddEventHandler<EventHandler<object>>(new Func<EventHandler<object>, EventRegistrationToken>(((Timeline) storyboard3).add_Completed), new Action<EventRegistrationToken>(((Timeline) storyboard3).remove_Completed), completed);
-      storyboard1.Begin();
-      return storyboard1;
+        To = endRotationY,
+        Duration = new Duration(TimeSpan.FromMilliseconds(140.0)),
+        AutoReverse = false,
+        FillBehavior = FillBehavior.Stop,
+        EnableDependentAnimation = true,
+        EasingFunction = easingFunction
+      };
+      Storyboard.SetTargetProperty(rotationAnim, "(UIElement.Projection).(PlaneProjection.RotationY)");
+      storyboard.Children.Add(rotationAnim);
+
+      var opacityAnim = new DoubleAnimation
+      {
+        To = endOpacity,
+        Duration = new Duration(TimeSpan.FromMilliseconds(140.0)),
+        AutoReverse = false,
+        EnableDependentAnimation = true,
+        FillBehavior = FillBehavior.Stop,
+        EasingFunction = easingFunction
+      };
+      Storyboard.SetTargetProperty(opacityAnim, "Opacity");
+      storyboard.Children.Add(opacityAnim);
+
+      EventHandler<object> completed = null;
+      completed = (sender, o) =>
+      {
+        targetUiElement.CacheMode = null;
+        var sb = (Storyboard)sender;
+        if (targetUiElement.Projection is PlaneProjection p)
+          p.RotationY = endRotationY;
+        targetUiElement.Opacity = endOpacity;
+        onCompleted?.Invoke();
+        sb.Completed -= completed;
+        sb.Stop();
+      };
+
+      storyboard.Completed += completed;
+      storyboard.Begin();
+      return storyboard;
     }
 
     public override Storyboard RunGoInForwardTransition(NavigationTransitionArgs args)
     {
       MvvmPage targetPage = args.TargetPage;
-      QuadraticEase easingFunction = new QuadraticEase();
-      ((EasingFunctionBase) easingFunction).put_EasingMode((EasingMode) 0);
+      var easingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
       Action onCompletedAction = args.OnCompletedAction;
       return this.RunTransition(targetPage, (EasingFunctionBase) easingFunction, 0.0, 1.0, -40.0, 0.0, onCompletedAction);
     }
@@ -93,8 +97,7 @@ namespace MetroLab.Common.Transitions
     public override Storyboard RunGoAwayBackwardTransition(NavigationTransitionArgs args)
     {
       MvvmPage targetPage = args.TargetPage;
-      QuadraticEase easingFunction = new QuadraticEase();
-      ((EasingFunctionBase) easingFunction).put_EasingMode((EasingMode) 1);
+      var easingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn };
       Action onCompletedAction = args.OnCompletedAction;
       return this.RunTransition(targetPage, (EasingFunctionBase) easingFunction, 1.0, 0.0, 0.0, -40.0, onCompletedAction);
     }
@@ -102,8 +105,7 @@ namespace MetroLab.Common.Transitions
     public override Storyboard RunGoInBackwardTransition(NavigationTransitionArgs args)
     {
       MvvmPage targetPage = args.TargetPage;
-      QuadraticEase easingFunction = new QuadraticEase();
-      ((EasingFunctionBase) easingFunction).put_EasingMode((EasingMode) 0);
+      var easingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut };
       Action onCompletedAction = args.OnCompletedAction;
       return this.RunTransition(targetPage, (EasingFunctionBase) easingFunction, 0.0, 1.0, 40.0, 0.0, onCompletedAction);
     }
@@ -111,8 +113,7 @@ namespace MetroLab.Common.Transitions
     public override Storyboard RunGoAwayForwardTransition(NavigationTransitionArgs args)
     {
       MvvmPage targetPage = args.TargetPage;
-      QuadraticEase easingFunction = new QuadraticEase();
-      ((EasingFunctionBase) easingFunction).put_EasingMode((EasingMode) 1);
+      var easingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn };
       Action onCompletedAction = args.OnCompletedAction;
       return this.RunTransition(targetPage, (EasingFunctionBase) easingFunction, 1.0, 0.0, 0.0, 40.0, onCompletedAction);
     }

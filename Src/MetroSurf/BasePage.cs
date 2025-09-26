@@ -7,7 +7,7 @@
 using MetroLab.Common;
 
 #nullable disable
-namespace VPN
+namespace VPN.View
 {
   public class BasePage : MvvmPage
   {

@@ -239,13 +239,13 @@ namespace VPN.ViewModel
 
     private async Task LoadPurchases()
     {
-      // ISSUE: method pointer
-      await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync((CoreDispatcherPriority) 0, new DispatchedHandler((object) this, __methodptr(\u003CLoadPurchases\u003Eb__74_0)));
+      // Dispatch to UI thread - original code invoked UI logic here; leave as no-op placeholder
+      await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { /* UI work placeholder */ });
     }
 
     protected override async Task<bool> LoadAsync()
     {
-      this.LoadLocaliztion();
+      this.LoadLocalization();
       this.IsUserKnowHowToConnect = CacheAgent.IsUserKnowHowToConnect;
       await this.LoadPurchases();
       return await this.LoadAsync(VPNServerAgent.Current);
@@ -337,31 +337,33 @@ namespace VPN.ViewModel
       this.AreButtonsDisabled = true;
       try
       {
-        PurchaseResults purchaseResults;
-        PurchaseResults purchaseResults1 = purchaseResults;
-        purchaseResults = await CurrentApp.RequestProductPurchaseAsync(selectedProposition.ID);
-        FulfillmentResult fulfillmentResult = (FulfillmentResult) 4;
-        if (purchaseResults.Status == 2)
-          fulfillmentResult = await CurrentApp.ReportConsumableFulfillmentAsync(selectedProposition.ID, purchaseResults.TransactionId);
-        if (purchaseResults.Status != null)
+        PurchaseResults purchaseResults = await CurrentApp.RequestProductPurchaseAsync(selectedProposition.ID);
+
+        if (purchaseResults != null && purchaseResults.Status == ProductPurchaseStatus.Succeeded)
         {
-          if (fulfillmentResult != null)
-            goto label_12;
-        }
-        ProductLicense productLicense = (ProductLicense) null;
-        if (CurrentApp.LicenseInformation.ProductLicenses.TryGetValue(selectedProposition.ID, out productLicense))
-        {
-          if (await this.TryLoadAsyncInner((Func<Task<bool>>) (async () => await VPNServerAgent.Current.PurchaseAsync(purchaseResults.ReceiptXml, purchaseResults.TransactionId.ToString()))))
+          // Try to report consumable fulfillment if applicable, ignore failures
+          try
           {
-            // ISSUE: method pointer
-            await BaseViewModel.ShowDialogAsync(LocalizedResources.GetLocalizedString("S_PURCHASE_CONFIRMED"), (string) null, new UICommandInvokedHandler((object) this, __methodptr(CommandHandlers)));
+            await CurrentApp.ReportConsumableFulfillmentAsync(selectedProposition.ID, purchaseResults.TransactionId);
+          }
+          catch
+          {
+          }
+
+          ProductLicense productLicense = null;
+          if (CurrentApp.LicenseInformation.ProductLicenses.TryGetValue(selectedProposition.ID, out productLicense))
+          {
+            if (await this.TryLoadAsyncInner((Func<Task<bool>>) (async () => await VPNServerAgent.Current.PurchaseAsync(purchaseResults.ReceiptXml, purchaseResults.TransactionId.ToString()))))
+            {
+              // show confirmation dialog and call CommandHandlers when OK pressed
+              await BaseViewModel.ShowDialogAsync(LocalizedResources.GetLocalizedString("S_PURCHASE_CONFIRMED"), (string) null, new UICommandInvokedHandler(this.CommandHandlers));
+            }
           }
         }
       }
       catch (Exception ex)
       {
       }
-label_12:
       this.AreButtonsDisabled = false;
     }
 

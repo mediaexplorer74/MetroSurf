@@ -149,7 +149,7 @@ namespace MetroLab.Common
     {
       internal static readonly Dictionary<Uri, WeakReference<BitmapImage>> Cache = new Dictionary<Uri, WeakReference<BitmapImage>>();
 
-      public override void RemoveContent() => this.TargetObject.put_Source((ImageSource) null);
+      public override void RemoveContent() => this.TargetObject.Source = (ImageSource) null;
 
       public override async Task SetSourceAsync(Uri localUri)
       {
@@ -182,7 +182,7 @@ namespace MetroLab.Common
               ContentLoader.SystemImageCacheHelper.Cache[localUri] = new WeakReference<BitmapImage>(source);
           }
         }
-        image.put_Source((ImageSource) source);
+        image.Source = (ImageSource) source;
       }
 
       public override async Task<bool> IsSourceEmptyAsync() => this.TargetObject.Source == null;
@@ -190,11 +190,11 @@ namespace MetroLab.Common
 
     private class MediaElementCacheHelper : ContentLoader.ElementCacheHelper<MediaElement>
     {
-      public override void RemoveContent() => this.TargetObject.put_Source((Uri) null);
+      public override void RemoveContent() => this.TargetObject.Source = (Uri) null;
 
       public override async Task SetSourceAsync(Uri localUri)
       {
-        this.TargetObject.put_Source(localUri);
+        this.TargetObject.Source = localUri;
       }
 
       public override async Task<bool> IsSourceEmptyAsync()

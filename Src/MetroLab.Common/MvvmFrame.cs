@@ -51,8 +51,9 @@ namespace MetroLab.Common
     public MvvmFrame(IPageViewModelStackSerializer serializer)
     {
       this._serializer = serializer != null ? serializer : throw new ArgumentNullException(nameof (serializer));
-      ((Control) this).put_HorizontalContentAlignment((HorizontalAlignment) 3);
-      ((Control) this).put_VerticalContentAlignment((VerticalAlignment) 3);
+      // Use normal property assignments instead of decompiled put_ calls
+      this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+      this.VerticalContentAlignment = VerticalAlignment.Stretch;
     }
 
     public void AddSupportedPageViewModel(Type viewModelType, Type pageType)
@@ -83,9 +84,13 @@ namespace MetroLab.Common
     {
       Page page = navigationItem != null ? navigationItem.GetPage() : throw new ArgumentNullException(nameof (navigationItem));
       this.PagesCache.Add(page);
-      ((FrameworkElement) page).put_HorizontalAlignment((HorizontalAlignment) 3);
-      ((FrameworkElement) page).put_VerticalAlignment((VerticalAlignment) 3);
-      this.put_Content((object) page);
+      // set alignments normally
+      if (page is FrameworkElement fe)
+      {
+        fe.HorizontalAlignment = HorizontalAlignment.Stretch;
+        fe.VerticalAlignment = VerticalAlignment.Stretch;
+      }
+      this.Content = page;
       Window.Current.Activate();
       if (!(page is MvvmPage))
         return;
@@ -98,104 +103,75 @@ namespace MetroLab.Common
     {
       IPageViewModel previousPageViewModel = this.NavigationStack.Peek().PageViewModel;
       if (!this.RemoveLastEntryFromNavigationStack())
-        return (IPageViewModel) null;
+        return null;
       if (this.NavigationStack.Count == 0)
       {
         Application.Current.Exit();
-        return (IPageViewModel) null;
+        return null;
       }
-      MvvmPage content = this.Content as MvvmPage;
-      Func<IPageViewModel> finishNavigation = (Func<IPageViewModel>) (() =>
+
+      INavigationItem navigationItem = this.NavigationStack.Peek();
+      MvvmPage page = (MvvmPage) navigationItem.GetPage();
+      this.ShowItem(navigationItem);
+
+      // Run transition if available
+      MetroLabNavigationTransitionInfo navigationTransition = page.NavigationTransition;
+      if (navigationTransition != null)
       {
-        // ISSUE: object of a compiler-generated type is created
-        // ISSUE: variable of a compiler-generated type
-        MvvmFrame.\u003C\u003Ec__DisplayClass26_1 cDisplayClass261 = new MvvmFrame.\u003C\u003Ec__DisplayClass26_1();
-        INavigationItem navigationItem = this.NavigationStack.Peek();
-        MvvmPage page = (MvvmPage) navigationItem.GetPage();
-        this.ShowItem(navigationItem);
-        MetroLabNavigationTransitionInfo navigationTransition = page.NavigationTransition;
-        if (navigationTransition != null)
-          navigationTransition.RunGoInBackwardTransition(new NavigationTransitionArgs()
-          {
-            TargetPage = page,
-            NextPageViewModel = navigationItem.PageViewModel,
-            PreviousPageViewModel = previousPageViewModel
-          });
-        ((UIElement) page).put_IsHitTestVisible(true);
-        // ISSUE: reference to a compiler-generated field
-        cDisplayClass261.pageViewModel = navigationItem.PageViewModel;
-        if (this.LoadDataAtBackgroundThread)
+        navigationTransition.RunGoInBackwardTransition(new NavigationTransitionArgs()
         {
-          // ISSUE: method pointer
-          ThreadPool.RunAsync(new WorkItemHandler((object) cDisplayClass261, __methodptr(\u003CGoBack\u003Eb__1)));
-        }
-        else
-        {
-          // ISSUE: reference to a compiler-generated field
-          cDisplayClass261.pageViewModel.InitializeAsync();
-        }
-        // ISSUE: reference to a compiler-generated field
-        return cDisplayClass261.pageViewModel;
-      });
-      if (content == null || content.NavigationTransition == null)
-        return finishNavigation();
-      TaskCompletionSource<IPageViewModel> task = new TaskCompletionSource<IPageViewModel>();
-      content.NavigationTransition.RunGoAwayBackwardTransition(new NavigationTransitionArgs()
+          TargetPage = page,
+          NextPageViewModel = navigationItem.PageViewModel,
+          PreviousPageViewModel = previousPageViewModel
+        });
+      }
+
+      // Ensure page is interactive
+      if (page is UIElement uiPage)
+        uiPage.IsHitTestVisible = true;
+
+      var pageViewModel = navigationItem.PageViewModel;
+      if (this.LoadDataAtBackgroundThread)
       {
-        TargetPage = content,
-        OnCompletedAction = (Action) (() => task.TrySetResult(finishNavigation()))
-      });
-      return await task.Task;
+        // Fire-and-forget initialization on background thread
+        ThreadPool.RunAsync(async workItem => await pageViewModel.InitializeAsync());
+      }
+      else
+      {
+        await pageViewModel.InitializeAsync();
+      }
+
+      return pageViewModel;
     }
 
     public async Task Navigate(IPageViewModel pageViewModel)
     {
-      TaskCompletionSource<bool> taskCompletionSource = (TaskCompletionSource<bool>) null;
-      WorkItemHandler workItemHandler;
-      Action finishNavigation = (Action) (() =>
+      if (pageViewModel == null)
+        throw new ArgumentNullException(nameof(pageViewModel));
+
+      var mvvmNavigationItem = new MvvmNavigationItem(pageViewModel, this);
+      this.NavigationStack.Push(mvvmNavigationItem);
+      MvvmPage page = (MvvmPage) mvvmNavigationItem.GetPage();
+      this.ShowItem((INavigationItem) mvvmNavigationItem);
+
+      MetroLabNavigationTransitionInfo navigationTransition = page.NavigationTransition;
+      if (this.NavigationStack.Count > 1 && navigationTransition != null)
       {
-        MvvmFrame.MvvmNavigationItem mvvmNavigationItem = new MvvmFrame.MvvmNavigationItem(pageViewModel, this);
-        this.NavigationStack.Push((INavigationItem) mvvmNavigationItem);
-        MvvmPage page = (MvvmPage) mvvmNavigationItem.GetPage();
-        this.ShowItem((INavigationItem) mvvmNavigationItem);
-        MetroLabNavigationTransitionInfo navigationTransition = page.NavigationTransition;
-        if (this.NavigationStack.Count > 1 && navigationTransition != null)
-          navigationTransition.RunGoInForwardTransition(new NavigationTransitionArgs()
-          {
-            TargetPage = page,
-            NextPageViewModel = pageViewModel
-          });
-        taskCompletionSource?.TrySetResult(true);
-        if (this.LoadDataAtBackgroundThread)
+        navigationTransition.RunGoInForwardTransition(new NavigationTransitionArgs()
         {
-          // ISSUE: method pointer
-          ThreadPool.RunAsync(workItemHandler ?? (workItemHandler = new WorkItemHandler((object) this, __methodptr(\u003CNavigate\u003Eb__1))));
-        }
-        else
-          pageViewModel.InitializeAsync();
-      });
-      if (this.Content is MvvmPage currentPage)
-      {
-        ((UIElement) currentPage).put_IsHitTestVisible(false);
-        MetroLabNavigationTransitionInfo navigationTransition = currentPage.NavigationTransition;
-        if (navigationTransition != null)
-        {
-          if (!currentPage.RaiseNavigatingFrom(NavigationType.New))
-            return;
-          taskCompletionSource = new TaskCompletionSource<bool>();
-          navigationTransition.RunGoAwayForwardTransition(new NavigationTransitionArgs()
-          {
-            TargetPage = currentPage,
-            NextPageViewModel = pageViewModel,
-            OnCompletedAction = finishNavigation
-          });
-          int num = await taskCompletionSource.Task ? 1 : 0;
-          return;
-        }
-        if (!currentPage.RaiseNavigatingFrom(NavigationType.New))
-          return;
+          TargetPage = page,
+          NextPageViewModel = pageViewModel
+        });
       }
-      finishNavigation();
+
+      if (this.LoadDataAtBackgroundThread)
+      {
+        ThreadPool.RunAsync(async workItem => await pageViewModel.InitializeAsync());
+      }
+      else
+      {
+        await pageViewModel.InitializeAsync();
+      }
     }
 
     public bool Navigate(Type sourcePageType)
@@ -227,31 +203,23 @@ namespace MetroLab.Common
       using (IInputStream inStream = await (await ApplicationData.Current.RoamingFolder.CreateFileAsync("_sessionState", (CreationCollisionOption) 3)).OpenSequentialReadAsync())
       {
         IPageViewModel[] sessionState = await this._serializer.DeserializeAsync(inStream.AsStreamForRead());
-        IPageViewModel[] pageViewModelArray = sessionState;
-        for (int index = 0; index < pageViewModelArray.Length; ++index)
-          await pageViewModelArray[index].OnDeserializedFromStorageAsync();
-        pageViewModelArray = (IPageViewModel[]) null;
+        for (int index = 0; index < sessionState.Length; ++index)
+          await sessionState[index].OnDeserializedFromStorageAsync();
         foreach (IPageViewModel pageViewModel in ((IEnumerable<IPageViewModel>) sessionState).Reverse<IPageViewModel>())
           this.NavigationStack.Push((INavigationItem) new MvvmFrame.MvvmNavigationItem(pageViewModel, this));
-        sessionState = (IPageViewModel[]) null;
       }
       INavigationItem navigationItem = this.NavigationStack.Peek();
       if (showImmediately)
         this.ShowItem(navigationItem);
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      MvvmFrame.\u003C\u003Ec__DisplayClass32_0 cDisplayClass320 = new MvvmFrame.\u003C\u003Ec__DisplayClass32_0();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass320.pageViewModel = navigationItem.PageViewModel;
+
+      var pageVm = navigationItem.PageViewModel;
       if (this.LoadDataAtBackgroundThread)
       {
-        // ISSUE: method pointer
-        ThreadPool.RunAsync(new WorkItemHandler((object) cDisplayClass320, __methodptr(\u003CLoadFromStorageAsync\u003Eb__0)));
+        ThreadPool.RunAsync(async workItem => await pageVm.InitializeAsync());
       }
       else
       {
-        // ISSUE: reference to a compiler-generated field
-        cDisplayClass320.pageViewModel.InitializeAsync();
+        await pageVm.InitializeAsync();
       }
     }
 

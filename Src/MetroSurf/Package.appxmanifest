@@ -43,8 +43,21 @@
           <uap:Rotation Preference="landscape"/>
           <uap:Rotation Preference="portrait"/>
           <uap:Rotation Preference="landscapeFlipped"/>
-          <uap:Rotation Preference="portraitFlipped"/></uap:InitialRotationPreference>
+          <uap:Rotation Preference="portraitFlipped"/>
+        </uap:InitialRotationPreference>
       </uap:VisualElements>
+
+      <!-- Extensions must be declared inside Application, not inside Capabilities -->
+      <Extensions>
+        <Extension Category="windows.backgroundTasks" EntryPoint="VPN.BackgroundAgent.UpdateApplicationTileTask">
+          <BackgroundTasks>
+            <!-- Declare the task types you will use. Example: systemEvent for SystemTrigger and timer for maintenance timers -->
+            <Task Type="systemEvent"/>
+            <Task Type="timer"/>
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
+
     </Application>
   </Applications>
 

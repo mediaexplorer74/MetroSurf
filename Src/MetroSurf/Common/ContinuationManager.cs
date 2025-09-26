@@ -14,7 +14,10 @@ namespace VPN.Common
   {
     internal void Continue(IContinuationActivatedEventArgs args)
     {
-      if (((IActivatedEventArgs) args).Kind != 1005)
+      var activated = args as IActivatedEventArgs;
+      if (activated == null)
+        return;
+      if (activated.Kind != ActivationKind.WebAuthenticationBrokerContinuation)
         return;
       LoginPage.Current?.ContinueWebAuthentication(args as WebAuthenticationBrokerContinuationEventArgs);
     }

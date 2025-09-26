@@ -103,27 +103,21 @@ namespace VPN.ViewModel.Pages
     {
       get
       {
-        return BaseViewModel.GetCommand(ref this._loginCommand, (Action<object>) (async o =>
+        return BaseViewModel.GetCommand(ref this._loginCommand, (Action<object>)(async o =>
         {
-          IUICommand iuiCommand = await new MessageDialog(LocalizedResources.GetLocalizedString("S_LOGOUT_CONFIRMATION"), 
-              LocalizedResources.GetLocalizedString("S_INFORMATION_WARNING"))
-          {
-            Commands = {
-              (IUICommand) new UICommand(LocalizedResources.GetLocalizedString("S_OK"), 
-              new UICommandInvokedHandler((object) this, __methodptr(CommandHandlers))),
-              (IUICommand) new UICommand(LocalizedResources.GetLocalizedString("S_CANCEL"), 
-              new UICommandInvokedHandler((object) this, __methodptr(CommandHandlers)))
-            }
-          }.ShowAsync();
+          var dialog = new MessageDialog(LocalizedResources.GetLocalizedString("S_LOGOUT_CONFIRMATION"), LocalizedResources.GetLocalizedString("S_INFORMATION_WARNING"));
+          dialog.Commands.Add(new UICommand(LocalizedResources.GetLocalizedString("S_OK"), new UICommandInvokedHandler(this.CommandHandlers)));
+          dialog.Commands.Add(new UICommand(LocalizedResources.GetLocalizedString("S_CANCEL"), new UICommandInvokedHandler(this.CommandHandlers)));
+          var iuiCommand = await dialog.ShowAsync();
         }));
       }
     }
 
-    public async void CommandHandlers(IUICommand commandLabel)
+    public void CommandHandlers(IUICommand commandLabel)
     {
       if (!(commandLabel.Label == LocalizedResources.GetLocalizedString("S_OK")))
         return;
-      await AutoLoginAgent.Current.Logout();
+      AutoLoginAgent.Current.Logout();
       AppViewModel.Current.ClearNavigationStack();
       AppViewModel.Current.GoHome();
     }

@@ -5,7 +5,6 @@
 // Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\MetroLab.Common.dll
 
 using MetroLog;
-using NotificationsExtensions.ToastContent;
 using System;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
@@ -18,6 +17,7 @@ using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using VPN.Localization;
+using System.Xml.Linq;
 
 #nullable disable
 namespace MetroLab.Common
@@ -98,15 +98,22 @@ namespace MetroLab.Common
       }
     }
 
+    private static string EscapeXml(string s)
+    {
+      if (s == null)
+        return string.Empty;
+      return s.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+    }
+
     public static void ShowToast(
       string textHeading,
       string textBody,
       TypedEventHandler<ToastNotification, object> onActivatedHandler = null)
     {
-      IToastText02 toastText02 = ToastContentFactory.CreateToastText02();
-      toastText02.TextHeading.Text = textHeading;
-      toastText02.TextBodyWrap.Text = textBody;
-      ToastNotification notification = toastText02.CreateNotification();
+      var toastXml = $"<toast><visual><binding template=\"ToastGeneric\"><text>{EscapeXml(textHeading)}</text><text>{EscapeXml(textBody)}</text></binding></visual></toast>";
+      var xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+      xmlDoc.LoadXml(toastXml);
+      var notification = new ToastNotification(xmlDoc);
       if (onActivatedHandler != null)
       {
         notification.Activated += onActivatedHandler;

@@ -119,20 +119,14 @@ namespace VPN.ViewModel.Pages
 
     private async Task ShowMessageAsync()
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      RatingsHelper.\u003C\u003Ec__DisplayClass19_0 cDisplayClass190 = new RatingsHelper.\u003C\u003Ec__DisplayClass19_0();
-      MessageDialog messageDialog = new MessageDialog(this._message, this._title);
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass190.result = 0;
-      // ISSUE: method pointer
-      messageDialog.Commands.Add((IUICommand) new UICommand(this._yesText, new UICommandInvokedHandler((object) cDisplayClass190, __methodptr(\u003CShowMessageAsync\u003Eb__0))));
-      // ISSUE: method pointer
-      messageDialog.Commands.Add((IUICommand) new UICommand(this._noText, new UICommandInvokedHandler((object) cDisplayClass190, __methodptr(\u003CShowMessageAsync\u003Eb__1))));
-      messageDialog.put_DefaultCommandIndex(0U);
-      IUICommand iuiCommand = await messageDialog.ShowAsync();
-      // ISSUE: reference to a compiler-generated field
-      if (cDisplayClass190.result == 1)
+      var messageDialog = new MessageDialog(this._message, this._title);
+      var yesCommand = new UICommand(this._yesText);
+      var noCommand = new UICommand(this._noText);
+      messageDialog.Commands.Add(yesCommand);
+      messageDialog.Commands.Add(noCommand);
+      messageDialog.DefaultCommandIndex = 0;
+      var result = await messageDialog.ShowAsync();
+      if (result != null && result.Label == this._yesText)
         await this.OnYesClickAsync();
       else
         await this.OnNoClickAsync();

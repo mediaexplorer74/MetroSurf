@@ -1,8 +1,5 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: MetroLab.Common.ContentStorage
-// Assembly: MetroLab.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: DBAE00CF-9C6B-4D8D-ACBC-54BA0CE44A06
-// Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\MetroLab.Common.dll
 
 using System;
 using System.Collections.Generic;
@@ -15,6 +12,10 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using System.Reflection;
 
 #nullable disable
 namespace MetroLab.Common
@@ -61,9 +62,8 @@ namespace MetroLab.Common
       FrameworkElement element = (FrameworkElement) o;
       if (ContentLoader.GetRemoveOldContentWhenLoading((DependencyObject) element))
         ContentLoader.GetHelper((object) element).RemoveContent();
-      WindowsRuntimeMarshal.RemoveEventHandler<RoutedEventHandler>(new Action<EventRegistrationToken>(element.remove_Unloaded), new RoutedEventHandler(this.ElementOnUnloaded));
-      FrameworkElement frameworkElement = element;
-      WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>(new Func<RoutedEventHandler, EventRegistrationToken>(frameworkElement.add_Unloaded), new Action<EventRegistrationToken>(frameworkElement.remove_Unloaded), new RoutedEventHandler(this.ElementOnUnloaded));
+      try { element.Unloaded -= this.ElementOnUnloaded; } catch { }
+      element.Unloaded += this.ElementOnUnloaded;
       await this.RemoveAllQueuedElements();
       await this.RemoveElement((object) element);
       this._elementsQueue.Enqueue((object) element, newServerPath);
@@ -74,8 +74,9 @@ namespace MetroLab.Common
     {
       FrameworkElement frameworkElement1 = (FrameworkElement) sender;
       FrameworkElement frameworkElement2 = frameworkElement1;
-      WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>(new Func<RoutedEventHandler, EventRegistrationToken>(frameworkElement2.add_Loaded), new Action<EventRegistrationToken>(frameworkElement2.remove_Loaded), new RoutedEventHandler(this.ElementOnLoaded));
-      WindowsRuntimeMarshal.RemoveEventHandler<RoutedEventHandler>(new Action<EventRegistrationToken>(frameworkElement1.remove_Unloaded), new RoutedEventHandler(this.ElementOnUnloaded));
+      try { frameworkElement2.Loaded -= this.ElementOnLoaded; } catch { }
+      frameworkElement2.Loaded += this.ElementOnLoaded;
+      try { frameworkElement1.Unloaded -= this.ElementOnUnloaded; } catch { }
       lock (this.PendingUnloadedElementsQueueLocker)
         this.PendingUnloadedElementsQueue.Add((object) frameworkElement1);
     }
@@ -83,7 +84,7 @@ namespace MetroLab.Common
     private async void ElementOnLoaded(object sender, RoutedEventArgs routedEventArgs)
     {
       FrameworkElement element = (FrameworkElement) sender;
-      WindowsRuntimeMarshal.RemoveEventHandler<RoutedEventHandler>(new Action<EventRegistrationToken>(element.remove_Loaded), new RoutedEventHandler(this.ElementOnLoaded));
+      try { element.Loaded -= this.ElementOnLoaded; } catch { }
       if (!await ContentLoader.GetHelper((object) element).IsSourceEmptyAsync())
         return;
       await this.RemoveAllQueuedElements();
@@ -141,37 +142,57 @@ namespace MetroLab.Common
 
     private Task<bool> SetCachedSource(object element, ContentStorage.CacheFileInfo cacheFileInfo)
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      ContentStorage.\u003C\u003Ec__DisplayClass23_0 cDisplayClass230 = new ContentStorage.\u003C\u003Ec__DisplayClass23_0();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass230.\u003C\u003E4__this = this;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass230.element = element;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass230.cacheFileInfo = cacheFileInfo;
-      // ISSUE: reference to a compiler-generated field
-      if (cDisplayClass230.cacheFileInfo.LocalUri == (Uri) null)
-        throw new ArgumentNullException("localUri");
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass230.task = new TaskCompletionSource<bool>();
-      // ISSUE: reference to a compiler-generated field
-      // ISSUE: reference to a compiler-generated method
-      cDisplayClass230.action = new Action<object>(cDisplayClass230.\u003CSetCachedSource\u003Eb__0);
-      // ISSUE: reference to a compiler-generated field
-      if (cDisplayClass230.element is FrameworkElement element1)
+      if (cacheFileInfo == null || cacheFileInfo.LocalUri == null)
+        throw new ArgumentNullException(nameof(cacheFileInfo));
+
+      Uri localUri = cacheFileInfo.LocalUri;
+
+      if (element is FrameworkElement fe)
       {
-        // ISSUE: method pointer
-        ((DependencyObject) element1).Dispatcher.RunAsync((CoreDispatcherPriority) -1, new DispatchedHandler((object) cDisplayClass230, __methodptr(\u003CSetCachedSource\u003Eb__1)));
+        var tcs = new TaskCompletionSource<bool>();
+        var _ = fe.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+        {
+          try
+          {
+            if (fe is Image img)
+            {
+              img.Source = new BitmapImage(localUri);
+              tcs.SetResult(true);
+              return;
+            }
+            if (fe is MediaElement me)
+            {
+              me.Source = localUri;
+              tcs.SetResult(true);
+              return;
+            }
+            var prop = element.GetType().GetRuntimeProperty("Source");
+            if (prop != null && prop.CanWrite)
+            {
+              if (prop.PropertyType == typeof(Uri))
+              {
+                prop.SetValue(element, localUri);
+                tcs.SetResult(true);
+                return;
+              }
+              if (typeof(ImageSource).GetTypeInfo().IsAssignableFrom(prop.PropertyType.GetTypeInfo()))
+              {
+                prop.SetValue(element, new BitmapImage(localUri));
+                tcs.SetResult(true);
+                return;
+              }
+            }
+            tcs.SetResult(false);
+          }
+          catch (Exception)
+          {
+            tcs.SetResult(false);
+          }
+        });
+        return tcs.Task;
       }
-      else
-      {
-        // ISSUE: reference to a compiler-generated field
-        // ISSUE: reference to a compiler-generated field
-        cDisplayClass230.action(cDisplayClass230.element);
-      }
-      // ISSUE: reference to a compiler-generated field
-      return cDisplayClass230.task.Task;
+
+      return Task.FromResult(false);
     }
 
     public void ReportCachedFilesDeleted()

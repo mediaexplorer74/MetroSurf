@@ -1,52 +1,57 @@
-﻿// Decompiled with JetBrains decompiler
+// Decompiled with JetBrains decompiler
 // Type: NotificationsExtensions.BadgeContent.BadgeNumericNotificationContent
 // Assembly: NotificationsExtensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null, ContentType=WindowsRuntime
 // MVID: 45D5A015-032A-4E9A-A1F7-E4E00D40AE62
 // Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\NotificationsExtensions.winmd
 
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
 using Windows.Data.Xml.Dom;
-using Windows.Foundation;
-using Windows.Foundation.Metadata;
 using Windows.UI.Notifications;
 
 #nullable disable
 namespace NotificationsExtensions.BadgeContent
 {
-  [MarshalingBehavior]
-  [Threading]
-  [Version(16777216)]
-  [CompilerGenerated]
-  [Activatable(16777216)]
-  [Activatable(typeof (IBadgeNumericNotificationContentFactory), 16777216)]
-  public sealed class BadgeNumericNotificationContent : 
-    IBadgeNotificationContent,
-    INotificationContent,
-    IBadgeNumericNotificationContentClass,
-    IStringable
-  {
-    [MethodImpl]
-    public extern BadgeNumericNotificationContent();
+    public sealed class BadgeNumericNotificationContent : NotificationsExtensions.INotificationContent
+    {
+        public BadgeNumericNotificationContent()
+        {
+            Number = 0;
+        }
 
-    [MethodImpl]
-    public extern BadgeNumericNotificationContent([In] uint number);
+        public BadgeNumericNotificationContent(uint number)
+        {
+            Number = number;
+        }
 
-    [MethodImpl]
-    public extern string GetContent();
+        public uint Number { get; set; }
 
-    [MethodImpl]
-    public extern XmlDocument GetXml();
+        public string GetContent()
+        {
+            var xml = GetXml();
+            return xml?.GetXml();
+        }
 
-    [MethodImpl]
-    public extern BadgeNotification CreateNotification();
+        public XmlDocument GetXml()
+        {
+            var doc = new XmlDocument();
+            var xml = $"<badge value=\"{Number}\"/>";
+            doc.LoadXml(xml);
+            return doc;
+        }
 
-    public extern uint Number { [MethodImpl] get; [MethodImpl] [param: In] set; }
+        public BadgeNotification CreateNotification()
+        {
+            var xml = GetXml();
+            return new BadgeNotification(xml);
+        }
 
-    [MethodImpl]
-    public override sealed extern string ToString();
+        public override string ToString()
+        {
+            return GetContent();
+        }
 
-    [MethodImpl]
-    extern string IStringable.ToString();
-  }
+        // Simple defaults for MVP
+        public string TemplateName => "badgeNumeric";
+        public string FallbackName => "badgeNumeric";
+    }
 }

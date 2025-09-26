@@ -4,6 +4,8 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -62,34 +64,48 @@ namespace VPN
             return mainFrame;
         }
 
-        protected override async void OnLaunched(LaunchActivatedEventArgs args)
+
+        // OnLaunched 
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             await InitializeAsync();
 
-            Window.Current.Content = _mvvmFrame ?? (_mvvmFrame = CreateMainFrame());
-            Window.Current.Activate();
-
-            AppViewModel.Current.HomePageViewModelType = HomePageViewModelType;
-
-            if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            // Ensure we only create the frame once
+            if (Window.Current.Content == null)
             {
-                try
-                {
-                    await _mvvmFrame.LoadFromStorageAsync();
-                    AutoLoginAgent.Current = CacheAgent.LoadFromLocalSettings<AutoLoginAgent>("temp");
-                }
-                catch
-                {
-                    AppViewModel.Current.NavigateToViewModel((IPageViewModel)Activator.CreateInstance(StartViewModelType));
-                }
+                Window.Current.Content = _mvvmFrame ?? (_mvvmFrame = CreateMainFrame());
             }
-            else if (CacheAgent.IsNeedToShowApplicationTour)
+
+            // If app was prelaunched, do not activate UI or navigate yet
+            if (e.PrelaunchActivated == false)
             {
-                AppViewModel.Current.NavigateToViewModel((IPageViewModel)Activator.CreateInstance(typeof(OverviewGalleryPageViewModel)));
-            }
-            else
-            {
-                AppViewModel.Current.NavigateToViewModel((IPageViewModel)Activator.CreateInstance(StartViewModelType));
+                Window.Current.Activate();
+
+                AppViewModel.Current.HomePageViewModelType = HomePageViewModelType;
+
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                    try
+                    {
+                        await _mvvmFrame.LoadFromStorageAsync();
+                        AutoLoginAgent.Current = CacheAgent.LoadFromLocalSettings<AutoLoginAgent>("temp");
+                    }
+                    catch
+                    {
+                        await AppViewModel.Current.NavigateToViewModel((IPageViewModel)Activator.CreateInstance(StartViewModelType));
+                    }
+                }
+                else if (CacheAgent.IsNeedToShowApplicationTour)
+                {
+                    System.Diagnostics.Debug.WriteLine(typeof(VPN.ViewModel.Pages.OverviewGalleryPageViewModel).AssemblyQualifiedName);
+                    System.Diagnostics.Debug.WriteLine(typeof(MetroLab.Common.IPageViewModel).AssemblyQualifiedName);
+                    System.Diagnostics.Debug.WriteLine(string.Join(", ", typeof(VPN.ViewModel.Pages.OverviewGalleryPageViewModel).GetInterfaces().Select(i => i.AssemblyQualifiedName)));
+                    await AppViewModel.Current.NavigateToViewModel((IPageViewModel)Activator.CreateInstance(typeof(OverviewGalleryPageViewModel)));
+                }
+                else
+                {
+                    await AppViewModel.Current.NavigateToViewModel((IPageViewModel)Activator.CreateInstance(StartViewModelType));
+                }
             }
         }
 

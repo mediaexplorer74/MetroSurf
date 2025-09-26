@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using Windows.Data.Json;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 #nullable disable
 namespace VPN.Localization
@@ -23,31 +25,62 @@ namespace VPN.Localization
 
     public static string GetLocalizedString(string resourceName)
     {
-      // Primary: explicit namespaced resource file
-      try
-      {
-        if (LocalizedResources._resourceLoader == null)
-          LocalizedResources._resourceLoader = ResourceLoader.GetForViewIndependentUse("VPN.Localization/Resources");
-        string val = LocalizedResources._resourceLoader.GetString(resourceName);
-        if (!string.IsNullOrEmpty(val))
-          return val;
-      }
-      catch
-      {
-        // ignore and try fallback
-      }
-
-      // Secondary: default resource loader for app
+      // Try default resource loader for app first (safer - merged resources typically live in app PRI)
       try
       {
         if (LocalizedResources._defaultResourceLoader == null)
-          LocalizedResources._defaultResourceLoader = ResourceLoader.GetForViewIndependentUse();
-        string val2 = LocalizedResources._defaultResourceLoader.GetString(resourceName);
-        if (!string.IsNullOrEmpty(val2))
-          return val2;
+        {
+          try
+          {
+            // RnD / TODO
+            //LocalizedResources._defaultResourceLoader = ResourceLoader.GetForViewIndependentUse();
+          }
+          catch (COMException cex)
+          {
+            Debug.WriteLine($"Default ResourceLoader COM error (HR=0x{cex.HResult:X8}): {cex.Message}");
+            // leave _defaultResourceLoader null so we fall through to other attempts
+            LocalizedResources._defaultResourceLoader = null;
+          }
+        }
+
+        if (LocalizedResources._defaultResourceLoader != null)
+        {
+          string val2 = LocalizedResources._defaultResourceLoader.GetString(resourceName);
+          if (!string.IsNullOrEmpty(val2))
+            return val2;
+        }
       }
-      catch
+      catch (Exception ex)
       {
+        Debug.WriteLine($"Default ResourceLoader failed: {ex.GetType().Name}: {ex.Message}");
+      }
+
+      // Secondary: explicit namespaced resource file (only if present)
+      try
+      {
+        if (LocalizedResources._resourceLoader == null)
+        {
+          try
+          {
+            LocalizedResources._resourceLoader = ResourceLoader.GetForViewIndependentUse("VPN.Localization/Resources");
+          }
+          catch (COMException cex)
+          {
+            Debug.WriteLine($"Namespaced ResourceLoader COM error (HR=0x{cex.HResult:X8}): {cex.Message}");
+            LocalizedResources._resourceLoader = null;
+          }
+        }
+
+        if (LocalizedResources._resourceLoader != null)
+        {
+          string val = LocalizedResources._resourceLoader.GetString(resourceName);
+          if (!string.IsNullOrEmpty(val))
+            return val;
+        }
+      }
+      catch (Exception ex)
+      {
+        Debug.WriteLine($"Namespaced ResourceLoader failed: {ex.GetType().Name}: {ex.Message}");
       }
 
       // Tertiary: load fallback JSON from app package (ms-appx:///Assets/Localization/ResourcesFallback.json)
@@ -57,8 +90,9 @@ namespace VPN.Localization
         if (LocalizedResources._fallbackStrings != null && LocalizedResources._fallbackStrings.TryGetValue(resourceName, out string v))
           return v;
       }
-      catch
+      catch (Exception ex)
       {
+        Debug.WriteLine($"Fallback load failed: {ex.GetType().Name}: {ex.Message}");
       }
 
       // Final fallback: return the resource key itself so UI remains usable
@@ -98,15 +132,17 @@ namespace VPN.Localization
               LocalizedResources._fallbackStrings = dict;
               return;
             }
-            catch
+            catch (Exception ex)
             {
+              Debug.WriteLine($"Parsing fallback JSON failed: {ex.GetType().Name}: {ex.Message}");
               // fall through to empty dictionary
             }
           }
         }
       }
-      catch
+      catch (Exception ex)
       {
+        Debug.WriteLine($"Reading fallback JSON failed: {ex.GetType().Name}: {ex.Message}");
         // ignore any errors reading fallback
       }
 

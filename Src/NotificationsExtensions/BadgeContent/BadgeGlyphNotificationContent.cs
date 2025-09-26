@@ -5,7 +5,7 @@ using Windows.UI.Notifications;
 #nullable disable
 namespace NotificationsExtensions.BadgeContent
 {
-    public sealed class BadgeGlyphNotificationContent : IBadgeNotificationContent, INotificationContent
+    public sealed class BadgeGlyphNotificationContent : NotificationsExtensions.INotificationContent
     {
         public BadgeGlyphNotificationContent()
         {
@@ -48,6 +48,10 @@ namespace NotificationsExtensions.BadgeContent
         {
             return GetContent();
         }
+
+        // INotificationContent members (simple defaults for MVP)
+        public string TemplateName => "badgeGlyph";
+        public string FallbackName => "badgeGlyph";
 
         private static string GlyphToString(GlyphValue gv)
         {

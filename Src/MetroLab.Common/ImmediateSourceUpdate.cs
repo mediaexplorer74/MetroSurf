@@ -34,10 +34,14 @@ namespace MetroLab.Common
       if ((bool) e.NewValue)
       {
         TextBox textBox2 = textBox1;
-        WindowsRuntimeMarshal.AddEventHandler<TextChangedEventHandler>(new Func<TextChangedEventHandler, EventRegistrationToken>(textBox2.add_TextChanged), new Action<EventRegistrationToken>(textBox2.remove_TextChanged), new TextChangedEventHandler(ImmediateSourceUpdate.txt_TextChanged));
+        // subscribe normally
+        textBox2.TextChanged += ImmediateSourceUpdate.txt_TextChanged;
       }
       else
-        WindowsRuntimeMarshal.RemoveEventHandler<TextChangedEventHandler>(new Action<EventRegistrationToken>(textBox1.remove_TextChanged), new TextChangedEventHandler(ImmediateSourceUpdate.txt_TextChanged));
+      {
+        // unsubscribe normally
+        textBox1.TextChanged -= ImmediateSourceUpdate.txt_TextChanged;
+      }
     }
 
     public static string GetSource(DependencyObject d)

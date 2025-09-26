@@ -14,7 +14,9 @@ namespace VPN.Converters
   {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-      return (object) (bool) (!(value is bool flag) ? 1 : (!flag ? 1 : 0));
+      if (value is bool flag)
+        return !flag;
+      return true; // default to true when input is not a bool
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

@@ -16,7 +16,7 @@ namespace MetroLab.Common
   public class ContentCacheTemp : ContentCache
   {
     private static volatile ContentCacheTemp _current;
-    public static readonly DependencyProperty SourceUrlTempProperty = DependencyProperty.RegisterAttached("SourceUrlTemp", typeof (string), typeof (ContentCache), new PropertyMetadata((object) null, new PropertyChangedCallback(((ContentCache) ContentCacheTemp.Current).OnSourceUriPropertyChanged)));
+    public static readonly DependencyProperty SourceUrlTempProperty = DependencyProperty.RegisterAttached("SourceUrlTemp", typeof (string), typeof (ContentCacheTemp), new PropertyMetadata((object) null, new PropertyChangedCallback((d, e) => ContentCacheTemp.Current.OnSourceUriPropertyChanged(d, e))));
 
     protected override string BinaryCacheFolderName => "BinaryCacheTemp";
 

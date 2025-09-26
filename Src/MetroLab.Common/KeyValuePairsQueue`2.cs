@@ -36,8 +36,8 @@ namespace MetroLab.Common
         throw new ArgumentOutOfRangeException(nameof (threadCount), "threadCount must be greater than 0");
       for (int index = 0; index < threadCount; ++index)
       {
-        // ISSUE: method pointer
-        ThreadPool.RunAsync(new WorkItemHandler((object) this, __methodptr(\u003CStartWorker\u003Eb__4_0)));
+        // Start the worker on the threadpool using a lambda
+        ThreadPool.RunAsync(_ => { this.Worker(); });
       }
     }
 

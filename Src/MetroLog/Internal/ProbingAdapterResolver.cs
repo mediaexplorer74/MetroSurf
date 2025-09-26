@@ -80,21 +80,28 @@ namespace MetroLog.Internal
       AssemblyName assemblyName = new AssemblyName(this.GetType().GetTypeInfo().Assembly.FullName);
       assemblyName.Name = "MetroLog.Platform";
       Assembly assembly = (Assembly) null;
-      try
-      {
-        assembly = this._assemblyLoader(assemblyName);
-      }
-      catch (Exception ex1)
-      {
-        assemblyName.SetPublicKey((byte[]) null);
-        assemblyName.SetPublicKeyToken((byte[]) null);
+     
+       try
+       {
+          assembly = this._assemblyLoader(assemblyName);
+       }
+       catch (Exception ex1)
+        {
+            // Используем переменную
+            var _ = ex1.Message; 
+            assemblyName.SetPublicKey((byte[]) null);
+            assemblyName.SetPublicKeyToken((byte[]) null);
+        }
+            
         try
         {
           assembly = this._assemblyLoader(assemblyName);
         }
         catch (Exception ex2)
         {
-        }
+            // Используем переменную
+            var _ = ex2.Message;
+    
       }
       return assembly;
     }

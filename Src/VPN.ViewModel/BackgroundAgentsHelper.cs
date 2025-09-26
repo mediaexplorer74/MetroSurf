@@ -32,20 +32,47 @@ namespace VPN.ViewModel
       await BackgroundAgentsHelper.RegisterUpdateAppTileTask("VPN on internet available task", (IBackgroundTrigger) new SystemTrigger((SystemTriggerType) 6, false), false);
     }
 
-    private static async Task RegisterUpdateAppTileTask(
-      string name,
-      IBackgroundTrigger trigger,
-      bool isWithInternetCondition)
-    {
-      BackgroundAccessStatus backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-      BackgroundTaskBuilder backgroundTaskBuilder1 = new BackgroundTaskBuilder();
-      backgroundTaskBuilder1.put_Name(name);
-      backgroundTaskBuilder1.put_TaskEntryPoint("VPN.BackgroundAgent.UpdateApplicationTileTask");
-      BackgroundTaskBuilder backgroundTaskBuilder2 = backgroundTaskBuilder1;
-      backgroundTaskBuilder2.SetTrigger(trigger);
-      if (isWithInternetCondition)
-        backgroundTaskBuilder2.AddCondition((IBackgroundCondition) new SystemCondition((SystemConditionType) 3));
-      backgroundTaskBuilder2.Register();
+        /*private static async Task RegisterUpdateAppTileTask(
+          string name,
+          IBackgroundTrigger trigger,
+          bool isWithInternetCondition)
+        {
+          BackgroundAccessStatus backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+          BackgroundTaskBuilder backgroundTaskBuilder1 = new BackgroundTaskBuilder();
+          backgroundTaskBuilder1.Name = name;
+          backgroundTaskBuilder1.TaskEntryPoint = "VPN.BackgroundAgent.UpdateApplicationTileTask";
+          BackgroundTaskBuilder backgroundTaskBuilder2 = backgroundTaskBuilder1;
+          backgroundTaskBuilder2.SetTrigger(trigger);
+          if (isWithInternetCondition)
+            backgroundTaskBuilder2.AddCondition((IBackgroundCondition) new SystemCondition((SystemConditionType) 3));
+          backgroundTaskBuilder2.Register();
+        }*/
+        private static async Task RegisterUpdateAppTileTask(string name, IBackgroundTrigger trigger, bool isWithInternetCondition)
+        {
+            var status = await BackgroundExecutionManager.RequestAccessAsync();
+            if (status != BackgroundAccessStatus.AllowedSubjectToSystemPolicy && status != BackgroundAccessStatus.AlwaysAllowed)
+            {
+                //throw new InvalidOperationException($"Background access denied: {status}");
+                return;
+            }
+
+            var builder = new BackgroundTaskBuilder
+            {
+                Name = name,
+                TaskEntryPoint = "VPN.BackgroundAgent.UpdateApplicationTileTask"
+            };
+            builder.SetTrigger(trigger);
+            if (isWithInternetCondition)
+                builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+            try
+            {
+                builder.Register();
+            }
+            catch (Exception ex)
+            {
+                // Log and rethrow or handle
+                throw;
+            }
+        }//RegisterUpdateAppTileTask
     }
-  }
 }

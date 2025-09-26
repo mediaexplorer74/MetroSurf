@@ -49,47 +49,31 @@ namespace MetroLab.Common
 
     protected override async void OnCollectionChanged(NotifyCollectionChangedEventArgs eventArgs)
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      MTObservableCollection<T>.\u003C\u003Ec__DisplayClass6_1 cDisplayClass61 = new MTObservableCollection<T>.\u003C\u003Ec__DisplayClass6_1();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass61.\u003C\u003E4__this = this;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass61.eventArgs = eventArgs;
       this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
       List<KeyValuePair<NotifyCollectionChangedEventHandler, CoreDispatcher>> list;
       lock (this._collectionChanged)
-        list = this._collectionChanged.ToList<KeyValuePair<NotifyCollectionChangedEventHandler, CoreDispatcher>>();
-      foreach (KeyValuePair<NotifyCollectionChangedEventHandler, CoreDispatcher> keyValuePair in list)
+        list = this._collectionChanged.ToList();
+
+      foreach (var kv in list)
       {
-        CoreDispatcher coreDispatcher = keyValuePair.Value;
-        if (coreDispatcher == null)
+        var handler = kv.Key;
+        var dispatcher = kv.Value;
+        if (dispatcher == null)
         {
-          try
-          {
-            // ISSUE: reference to a compiler-generated field
-            keyValuePair.Key((object) this, cDisplayClass61.eventArgs);
-          }
-          catch (Exception ex)
-          {
-            if (Debugger.IsAttached)
-              Debugger.Break();
-          }
+          try { handler(this, eventArgs); } catch { if (Debugger.IsAttached) Debugger.Break(); }
         }
-        else if (coreDispatcher.HasThreadAccess)
+        else if (dispatcher.HasThreadAccess)
         {
-          // ISSUE: reference to a compiler-generated field
-          keyValuePair.Key((object) this, cDisplayClass61.eventArgs);
+          try { handler(this, eventArgs); } catch { if (Debugger.IsAttached) Debugger.Break(); }
         }
         else
         {
-          // ISSUE: object of a compiler-generated type is created
-          // ISSUE: method pointer
-          await coreDispatcher.RunAsync((CoreDispatcherPriority) 0, new DispatchedHandler((object) new MTObservableCollection<T>.\u003C\u003Ec__DisplayClass6_0()
+          var capturedHandler = handler;
+          var capturedArgs = eventArgs;
+          await dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(() =>
           {
-            CS\u0024\u003C\u003E8__locals1 = cDisplayClass61,
-            item1 = keyValuePair
-          }, __methodptr(\u003COnCollectionChanged\u003Eb__0)));
+            try { capturedHandler(this, capturedArgs); } catch { if (Debugger.IsAttached) Debugger.Break(); }
+          }));
         }
       }
     }
@@ -117,36 +101,30 @@ namespace MetroLab.Common
 
     protected override async void OnPropertyChanged(PropertyChangedEventArgs eventArgs)
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      MTObservableCollection<T>.\u003C\u003Ec__DisplayClass11_1 cDisplayClass111 = new MTObservableCollection<T>.\u003C\u003Ec__DisplayClass11_1();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass111.\u003C\u003E4__this = this;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass111.eventArgs = eventArgs;
       List<KeyValuePair<PropertyChangedEventHandler, CoreDispatcher>> list;
       lock (this._propertyChanged)
-        list = this._propertyChanged.ToList<KeyValuePair<PropertyChangedEventHandler, CoreDispatcher>>();
-      foreach (KeyValuePair<PropertyChangedEventHandler, CoreDispatcher> keyValuePair in list)
+        list = this._propertyChanged.ToList();
+
+      foreach (var kv in list)
       {
-        CoreDispatcher coreDispatcher = keyValuePair.Value;
-        if (coreDispatcher != null)
+        var handler = kv.Key;
+        var dispatcher = kv.Value;
+        if (dispatcher == null)
         {
-          if (coreDispatcher.HasThreadAccess)
+          try { handler(this, eventArgs); } catch { if (Debugger.IsAttached) Debugger.Break(); }
+        }
+        else if (dispatcher.HasThreadAccess)
+        {
+          try { handler(this, eventArgs); } catch { if (Debugger.IsAttached) Debugger.Break(); }
+        }
+        else
+        {
+          var capHandler = handler;
+          var capArgs = eventArgs;
+          await dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(() =>
           {
-            // ISSUE: reference to a compiler-generated field
-            keyValuePair.Key((object) this, cDisplayClass111.eventArgs);
-          }
-          else
-          {
-            // ISSUE: object of a compiler-generated type is created
-            // ISSUE: method pointer
-            await coreDispatcher.RunAsync((CoreDispatcherPriority) 0, new DispatchedHandler((object) new MTObservableCollection<T>.\u003C\u003Ec__DisplayClass11_0()
-            {
-              CS\u0024\u003C\u003E8__locals1 = cDisplayClass111,
-              item1 = keyValuePair
-            }, __methodptr(\u003COnPropertyChanged\u003Eb__0)));
-          }
+            try { capHandler(this, capArgs); } catch { if (Debugger.IsAttached) Debugger.Break(); }
+          }));
         }
       }
     }

@@ -48,7 +48,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(_password)), "password");
       this.AddParametersForRequestToVPN(multipartFormDataContent);
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://auth.simplexsolutionsinc.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponseOnLogin result = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -75,7 +75,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("win_phone_purch")), "purch_type");
       this.AddParametersForRequestToVPN(multipartFormDataContent);
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://auth.simplexsolutionsinc.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponseOnLogin responseOnLogin = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -96,7 +96,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(AutoLoginAgent.Current.Session)), "session");
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("com.simplexsolutionsinc.vpnguard")), "service");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://api.vpnunlimitedapp.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponceOnServersList result = (ResponceOnServersList) new DataContractJsonSerializer(typeof (ResponceOnServersList)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -123,7 +123,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(AutoLoginAgent.Current.Session)), "session");
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("com.simplexsolutionsinc.vpnguard")), "service");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://api.vpnunlimitedapp.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponceOnAccountStatus result = (ResponceOnAccountStatus) new DataContractJsonSerializer(typeof (ResponceOnAccountStatus)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -152,7 +152,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(region)), nameof (region));
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("com.simplexsolutionsinc.vpnguard")), "service");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://api.vpnunlimitedapp.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponceOnConfigInfo result = (ResponceOnConfigInfo) new DataContractJsonSerializer(typeof (ResponceOnConfigInfo)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -184,7 +184,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(str)), "oauthcredentials");
       this.AddParametersForRequestToVPN(multipartFormDataContent);
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://auth.simplexsolutionsinc.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       ResponseOnLogin responseOnLogin = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await (await new HttpClient().SendRequestAsync(httpRequestMessage)).Content.ReadAsBufferAsync()).AsStream());
       AutoLoginAgent.Current.Session = responseOnLogin.Response == 200 ? responseOnLogin.Session : throw new VPNResponceException(responseOnLogin.Response.ToString());
       AutoLoginAgent.Current.UserEmail = responseOnLogin.UserInfo.Username ?? credentialsFacebook.Email;
@@ -211,7 +211,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(str)), "oauthcredentials");
       this.AddParametersForRequestToVPN(multipartFormDataContent);
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://auth.simplexsolutionsinc.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       ResponseOnLogin responseOnLogin = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await (await new HttpClient().SendRequestAsync(httpRequestMessage)).Content.ReadAsBufferAsync()).AsStream());
       AutoLoginAgent.Current.Session = responseOnLogin.Response == 200 ? responseOnLogin.Session : throw new VPNResponceException(responseOnLogin.Response.ToString());
       AutoLoginAgent.Current.UserEmail = responseOnLogin.UserInfo.Username ?? credentialsGoogle.Email;
@@ -243,7 +243,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(AutoLoginAgent.Current.Session)), "session");
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("com.simplexsolutionsinc.vpnguard")), "service");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://api.vpnunlimitedapp.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       ResponseOnLogin responseOnLogin = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await (await new HttpClient().SendRequestAsync(httpRequestMessage)).Content.ReadAsBufferAsync()).AsStream());
       return true;
     }
@@ -262,7 +262,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(friendemail)), "login");
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("email")), "type");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://auth.simplexsolutionsinc.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       ResponceOnFriendInvitation result = (ResponceOnFriendInvitation) new DataContractJsonSerializer(typeof (ResponceOnFriendInvitation)).ReadObject((await (await new HttpClient().SendRequestAsync(httpRequestMessage)).Content.ReadAsBufferAsync()).AsStream());
       if (result.Response == 200)
         return true;
@@ -287,7 +287,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("win_phone_purch")), "purch_type");
       this.AddParametersForRequestToVPN(multipartFormDataContent);
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://auth.simplexsolutionsinc.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponseOnLogin result = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -306,7 +306,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64(_email)), "login");
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("com.simplexsolutionsinc.vpnguard")), "service");
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://auth.simplexsolutionsinc.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponseOnLogin responseOnLogin = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());
@@ -337,7 +337,7 @@ namespace VPN.ViewModel.Http
       multipartFormDataContent.Add((IHttpContent) new HttpStringContent(VPNServerAgent.ToBase64("win_phone_purch")), "purch_type");
       this.AddParametersForRequestToVPN(multipartFormDataContent);
       HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, new Uri("https://api.vpnunlimitedapp.com/", UriKind.Absolute));
-      httpRequestMessage.put_Content((IHttpContent) multipartFormDataContent);
+      httpRequestMessage.Content = (IHttpContent) multipartFormDataContent;
       HttpResponseMessage httpResponseMessage = await new HttpClient().SendRequestAsync(httpRequestMessage);
       httpResponseMessage.EnsureSuccessStatusCode();
       ResponseOnLogin result = (ResponseOnLogin) new DataContractJsonSerializer(typeof (ResponseOnLogin)).ReadObject((await httpResponseMessage.Content.ReadAsBufferAsync()).AsStream());

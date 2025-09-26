@@ -6,12 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Networking.Connectivity;
 using Windows.UI.Core;
 
@@ -34,18 +32,9 @@ namespace MetroLab.Common
 
     public static async Task<AppViewModel> GetMainAsync()
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      AppViewModel.\u003C\u003Ec__DisplayClass7_0 cDisplayClass70 = new AppViewModel.\u003C\u003Ec__DisplayClass7_0();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass70.window = CoreApplication.MainView.CoreWindow;
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass70.appViewModel = (AppViewModel) null;
-      // ISSUE: reference to a compiler-generated field
-      // ISSUE: method pointer
-      await cDisplayClass70.window.Dispatcher.RunAsync((CoreDispatcherPriority) 0, new DispatchedHandler((object) cDisplayClass70, __methodptr(\u003CGetMainAsync\u003Eb__0)));
-      // ISSUE: reference to a compiler-generated field
-      return cDisplayClass70.appViewModel;
+      // Ensure we return the AppViewModel for the main view
+      var window = CoreApplication.MainView.CoreWindow;
+      return await Task.FromResult(GetAppViewModelForWindow(window));
     }
 
     public MvvmFrame MvvmFrame { get; set; }
@@ -106,10 +95,11 @@ namespace MetroLab.Common
     private AppViewModel()
     {
       AppViewModel.CurrentDataTransferManager = DataTransferManager.GetForCurrentView();
-      DataTransferManager dataTransferManager = AppViewModel.CurrentDataTransferManager;
-      // ISSUE: method pointer
-      WindowsRuntimeMarshal.AddEventHandler<TypedEventHandler<DataTransferManager, DataRequestedEventArgs>>(new Func<TypedEventHandler<DataTransferManager, DataRequestedEventArgs>, EventRegistrationToken>(dataTransferManager.add_DataRequested), new Action<EventRegistrationToken>(dataTransferManager.remove_DataRequested), new TypedEventHandler<DataTransferManager, DataRequestedEventArgs>((object) this, __methodptr(CurrentDataTransferManagerDataRequested)));
-      WindowsRuntimeMarshal.AddEventHandler<NetworkStatusChangedEventHandler>(new Func<NetworkStatusChangedEventHandler, EventRegistrationToken>(NetworkInformation.add_NetworkStatusChanged), new Action<EventRegistrationToken>(NetworkInformation.remove_NetworkStatusChanged), new NetworkStatusChangedEventHandler(this.NetworkInformationOnNetworkStatusChanged));
+      var dataTransferManager = AppViewModel.CurrentDataTransferManager;
+      if (dataTransferManager != null)
+        dataTransferManager.DataRequested += this.CurrentDataTransferManagerDataRequested;
+
+      NetworkInformation.NetworkStatusChanged += this.NetworkInformationOnNetworkStatusChanged;
       AppViewModel.UpdateGlobalIsWorkingOffline();
     }
 
@@ -135,14 +125,14 @@ namespace MetroLab.Common
     public static bool GetIsConnectedToNetwork()
     {
       ConnectionProfile connectionProfile = NetworkInformation.GetInternetConnectionProfile();
-      return connectionProfile != null && connectionProfile.GetNetworkConnectivityLevel() == 3;
+      return connectionProfile != null && connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
     }
 
     public async Task RunAtDispatcherAsync(DispatchedHandler action)
     {
       CoreDispatcher dispatcher = this.Dispatcher;
       if (dispatcher != null && !dispatcher.HasThreadAccess)
-        dispatcher.RunAsync((CoreDispatcherPriority) 0, action);
+        await dispatcher.RunAsync((CoreDispatcherPriority) 0, action);
       else
         action.Invoke();
     }

@@ -1,12 +1,8 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: MetroLab.Common.Transitions.SlideAndZoomNavigationTransition
-// Assembly: MetroLab.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: DBAE00CF-9C6B-4D8D-ACBC-54BA0CE44A06
-// Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\MetroLab.Common.dll
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,204 +12,223 @@ using Windows.UI.Xaml.Media.Animation;
 #nullable disable
 namespace MetroLab.Common.Transitions
 {
-  public class SlideAndZoomNavigationTransition : MetroLabNavigationTransitionInfo
-  {
-    public override Storyboard RunGoInForwardTransition(NavigationTransitionArgs args)
+    public class SlideAndZoomNavigationTransition : MetroLabNavigationTransitionInfo
     {
-      UIElement targetUiElement = ((UserControl) args.TargetPage).Content;
-      targetUiElement.put_CacheMode((CacheMode) new BitmapCache());
-      Rect bounds = Window.Current.CoreWindow.Bounds;
-      UIElement uiElement = targetUiElement;
-      CompositeTransform compositeTransform = new CompositeTransform();
-      compositeTransform.put_CenterX(bounds.Width / 2.0);
-      compositeTransform.put_CenterY(bounds.Height / 2.0);
-      compositeTransform.put_ScaleX(0.85);
-      compositeTransform.put_ScaleY(0.85);
-      uiElement.put_RenderTransform((Transform) compositeTransform);
-      targetUiElement.put_Opacity(0.0);
-      Storyboard storyboard1 = new Storyboard();
-      ((Timeline) storyboard1).put_Duration((Duration) TimeSpan.FromMilliseconds(230.0));
-      Storyboard.SetTarget((Timeline) storyboard1, (DependencyObject) targetUiElement);
-      DoubleAnimation doubleAnimation1 = new DoubleAnimation();
-      doubleAnimation1.put_To(new double?(1.0));
-      ((Timeline) doubleAnimation1).put_Duration(new Duration(TimeSpan.FromMilliseconds(220.0)));
-      ((Timeline) doubleAnimation1).put_AutoReverse(false);
-      doubleAnimation1.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation1).put_FillBehavior((FillBehavior) 0);
-      QuadraticEase quadraticEase1 = new QuadraticEase();
-      ((EasingFunctionBase) quadraticEase1).put_EasingMode((EasingMode) 0);
-      doubleAnimation1.put_EasingFunction((EasingFunctionBase) quadraticEase1);
-      DoubleAnimation doubleAnimation2 = doubleAnimation1;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation2, "(UIElement.RenderTransform).(CompositeTransform.ScaleX)");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation2);
-      DoubleAnimation doubleAnimation3 = new DoubleAnimation();
-      doubleAnimation3.put_To(new double?(1.0));
-      ((Timeline) doubleAnimation3).put_Duration(new Duration(TimeSpan.FromMilliseconds(220.0)));
-      ((Timeline) doubleAnimation3).put_AutoReverse(false);
-      doubleAnimation3.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation3).put_FillBehavior((FillBehavior) 0);
-      QuadraticEase quadraticEase2 = new QuadraticEase();
-      ((EasingFunctionBase) quadraticEase2).put_EasingMode((EasingMode) 0);
-      doubleAnimation3.put_EasingFunction((EasingFunctionBase) quadraticEase2);
-      DoubleAnimation doubleAnimation4 = doubleAnimation3;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation4, "(UIElement.RenderTransform).(CompositeTransform.ScaleY)");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation4);
-      DoubleAnimation doubleAnimation5 = new DoubleAnimation();
-      doubleAnimation5.put_To(new double?(1.0));
-      ((Timeline) doubleAnimation5).put_Duration(new Duration(TimeSpan.FromMilliseconds(220.0)));
-      ((Timeline) doubleAnimation5).put_AutoReverse(false);
-      doubleAnimation5.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation5).put_FillBehavior((FillBehavior) 0);
-      QuadraticEase quadraticEase3 = new QuadraticEase();
-      ((EasingFunctionBase) quadraticEase3).put_EasingMode((EasingMode) 0);
-      doubleAnimation5.put_EasingFunction((EasingFunctionBase) quadraticEase3);
-      DoubleAnimation doubleAnimation6 = doubleAnimation5;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation6, "Opacity");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation6);
-      EventHandler<object> completed = (EventHandler<object>) null;
-      completed = (EventHandler<object>) ((sender, o) =>
-      {
-        targetUiElement.put_CacheMode((CacheMode) null);
-        Storyboard storyboard2 = (Storyboard) sender;
-        targetUiElement.put_Opacity(1.0);
-        if (targetUiElement.RenderTransform is CompositeTransform renderTransform2)
+        private Storyboard CreateScaleAndFadeStoryboard(UIElement target, double durationMs = 220, bool fadeIn = true)
         {
-          renderTransform2.put_ScaleX(1.0);
-          renderTransform2.put_ScaleY(1.0);
+            var sb = new Storyboard();
+            sb.Duration = new Duration(TimeSpan.FromMilliseconds(230));
+            Storyboard.SetTarget(sb, target);
+
+            var ease = new QuadraticEase { EasingMode = EasingMode.EaseOut };
+
+            var animScaleX = new DoubleAnimation
+            {
+                To = fadeIn ? 1.0 : 0.85,
+                Duration = new Duration(TimeSpan.FromMilliseconds(durationMs)),
+                EnableDependentAnimation = true,
+                FillBehavior = FillBehavior.Stop,
+                EasingFunction = ease
+            };
+            Storyboard.SetTargetProperty(animScaleX, "(UIElement.RenderTransform).(CompositeTransform.ScaleX)");
+            sb.Children.Add(animScaleX);
+
+            var animScaleY = new DoubleAnimation
+            {
+                To = fadeIn ? 1.0 : 0.85,
+                Duration = new Duration(TimeSpan.FromMilliseconds(durationMs)),
+                EnableDependentAnimation = true,
+                FillBehavior = FillBehavior.Stop,
+                EasingFunction = ease
+            };
+            Storyboard.SetTargetProperty(animScaleY, "(UIElement.RenderTransform).(CompositeTransform.ScaleY)");
+            sb.Children.Add(animScaleY);
+
+            var animOpacity = new DoubleAnimation
+            {
+                To = fadeIn ? 1.0 : 0.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(durationMs)),
+                EnableDependentAnimation = true,
+                FillBehavior = FillBehavior.Stop
+            };
+            Storyboard.SetTargetProperty(animOpacity, "Opacity");
+            sb.Children.Add(animOpacity);
+
+            return sb;
         }
-        // ISSUE: virtual method pointer
-        WindowsRuntimeMarshal.RemoveEventHandler<EventHandler<object>>(new Action<EventRegistrationToken>((object) storyboard2, __vmethodptr(storyboard2, remove_Completed)), completed);
-        storyboard2.Stop();
-      });
-      Storyboard storyboard3 = storyboard1;
-      WindowsRuntimeMarshal.AddEventHandler<EventHandler<object>>(new Func<EventHandler<object>, EventRegistrationToken>(((Timeline) storyboard3).add_Completed), new Action<EventRegistrationToken>(((Timeline) storyboard3).remove_Completed), completed);
-      storyboard1.Begin();
-      return storyboard1;
-    }
 
-    public override Storyboard RunGoAwayBackwardTransition(NavigationTransitionArgs args)
-    {
-      UIElement targetUiElement = ((UserControl) args.TargetPage).Content;
-      targetUiElement.put_CacheMode((CacheMode) new BitmapCache());
-      targetUiElement.put_RenderTransform((Transform) new CompositeTransform());
-      targetUiElement.put_Opacity(1.0);
-      Storyboard storyboard1 = new Storyboard();
-      ((Timeline) storyboard1).put_Duration((Duration) TimeSpan.FromMilliseconds(230.0));
-      Storyboard.SetTarget((Timeline) storyboard1, (DependencyObject) targetUiElement);
-      DoubleAnimation doubleAnimation1 = new DoubleAnimation();
-      doubleAnimation1.put_To(new double?(120.0));
-      ((Timeline) doubleAnimation1).put_Duration(new Duration(TimeSpan.FromMilliseconds(220.0)));
-      ((Timeline) doubleAnimation1).put_AutoReverse(false);
-      doubleAnimation1.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation1).put_FillBehavior((FillBehavior) 0);
-      QuadraticEase quadraticEase1 = new QuadraticEase();
-      ((EasingFunctionBase) quadraticEase1).put_EasingMode((EasingMode) 1);
-      doubleAnimation1.put_EasingFunction((EasingFunctionBase) quadraticEase1);
-      DoubleAnimation doubleAnimation2 = doubleAnimation1;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation2, "(UIElement.RenderTransform).(CompositeTransform.TranslateY)");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation2);
-      DoubleAnimation doubleAnimation3 = new DoubleAnimation();
-      doubleAnimation3.put_To(new double?(0.0));
-      ((Timeline) doubleAnimation3).put_Duration(new Duration(TimeSpan.FromMilliseconds(220.0)));
-      ((Timeline) doubleAnimation3).put_AutoReverse(false);
-      doubleAnimation3.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation3).put_FillBehavior((FillBehavior) 0);
-      QuadraticEase quadraticEase2 = new QuadraticEase();
-      ((EasingFunctionBase) quadraticEase2).put_EasingMode((EasingMode) 1);
-      doubleAnimation3.put_EasingFunction((EasingFunctionBase) quadraticEase2);
-      DoubleAnimation doubleAnimation4 = doubleAnimation3;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation4, "Opacity");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation4);
-      EventHandler<object> completed = (EventHandler<object>) null;
-      completed = (EventHandler<object>) ((sender, o) =>
-      {
-        targetUiElement.put_CacheMode((CacheMode) null);
-        Storyboard storyboard2 = (Storyboard) sender;
-        targetUiElement.put_Opacity(0.0);
-        if (args.OnCompletedAction != null)
-          args.OnCompletedAction();
-        // ISSUE: virtual method pointer
-        WindowsRuntimeMarshal.RemoveEventHandler<EventHandler<object>>(new Action<EventRegistrationToken>((object) storyboard2, __vmethodptr(storyboard2, remove_Completed)), completed);
-        storyboard2.Stop();
-      });
-      Storyboard storyboard3 = storyboard1;
-      WindowsRuntimeMarshal.AddEventHandler<EventHandler<object>>(new Func<EventHandler<object>, EventRegistrationToken>(((Timeline) storyboard3).add_Completed), new Action<EventRegistrationToken>(((Timeline) storyboard3).remove_Completed), completed);
-      storyboard1.Begin();
-      return storyboard1;
-    }
+        public override Storyboard RunGoInForwardTransition(NavigationTransitionArgs args)
+        {
+            if (!(args.TargetPage is UserControl uc))
+                return null;
 
-    public override Storyboard RunGoInBackwardTransition(NavigationTransitionArgs args)
-    {
-      UIElement targetUiElement = ((UserControl) args.TargetPage).Content;
-      targetUiElement.put_CacheMode((CacheMode) new BitmapCache());
-      targetUiElement.put_Opacity(0.0);
-      Storyboard storyboard1 = new Storyboard();
-      ((Timeline) storyboard1).put_Duration((Duration) TimeSpan.FromMilliseconds(230.0));
-      Storyboard.SetTarget((Timeline) storyboard1, (DependencyObject) targetUiElement);
-      DoubleAnimation doubleAnimation1 = new DoubleAnimation();
-      doubleAnimation1.put_To(new double?(1.0));
-      ((Timeline) doubleAnimation1).put_Duration(new Duration(TimeSpan.FromMilliseconds(220.0)));
-      ((Timeline) doubleAnimation1).put_AutoReverse(false);
-      doubleAnimation1.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation1).put_FillBehavior((FillBehavior) 0);
-      QuadraticEase quadraticEase = new QuadraticEase();
-      ((EasingFunctionBase) quadraticEase).put_EasingMode((EasingMode) 0);
-      doubleAnimation1.put_EasingFunction((EasingFunctionBase) quadraticEase);
-      DoubleAnimation doubleAnimation2 = doubleAnimation1;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation2, "Opacity");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation2);
-      EventHandler<object> completed = (EventHandler<object>) null;
-      completed = (EventHandler<object>) ((sender, o) =>
-      {
-        targetUiElement.put_CacheMode((CacheMode) null);
-        Storyboard storyboard2 = (Storyboard) sender;
-        targetUiElement.put_Opacity(1.0);
-        // ISSUE: virtual method pointer
-        WindowsRuntimeMarshal.RemoveEventHandler<EventHandler<object>>(new Action<EventRegistrationToken>((object) storyboard2, __vmethodptr(storyboard2, remove_Completed)), completed);
-        storyboard2.Stop();
-      });
-      Storyboard storyboard3 = storyboard1;
-      WindowsRuntimeMarshal.AddEventHandler<EventHandler<object>>(new Func<EventHandler<object>, EventRegistrationToken>(((Timeline) storyboard3).add_Completed), new Action<EventRegistrationToken>(((Timeline) storyboard3).remove_Completed), completed);
-      storyboard1.Begin();
-      return storyboard1;
-    }
+            var target = uc.Content as UIElement;
+            if (target == null)
+                return null;
 
-    public override Storyboard RunGoAwayForwardTransition(NavigationTransitionArgs args)
-    {
-      UIElement targetUiElement = ((UserControl) args.TargetPage).Content;
-      targetUiElement.put_CacheMode((CacheMode) new BitmapCache());
-      targetUiElement.put_Opacity(1.0);
-      Storyboard storyboard1 = new Storyboard();
-      ((Timeline) storyboard1).put_Duration((Duration) TimeSpan.FromMilliseconds(230.0));
-      Storyboard.SetTarget((Timeline) storyboard1, (DependencyObject) targetUiElement);
-      DoubleAnimation doubleAnimation1 = new DoubleAnimation();
-      doubleAnimation1.put_To(new double?(0.0));
-      ((Timeline) doubleAnimation1).put_Duration(new Duration(TimeSpan.FromMilliseconds(220.0)));
-      ((Timeline) doubleAnimation1).put_AutoReverse(false);
-      doubleAnimation1.put_EnableDependentAnimation(true);
-      ((Timeline) doubleAnimation1).put_FillBehavior((FillBehavior) 0);
-      QuadraticEase quadraticEase = new QuadraticEase();
-      ((EasingFunctionBase) quadraticEase).put_EasingMode((EasingMode) 1);
-      doubleAnimation1.put_EasingFunction((EasingFunctionBase) quadraticEase);
-      DoubleAnimation doubleAnimation2 = doubleAnimation1;
-      Storyboard.SetTargetProperty((Timeline) doubleAnimation2, "Opacity");
-      ((ICollection<Timeline>) storyboard1.Children).Add((Timeline) doubleAnimation2);
-      EventHandler<object> completed = (EventHandler<object>) null;
-      completed = (EventHandler<object>) ((sender, o) =>
-      {
-        targetUiElement.put_CacheMode((CacheMode) null);
-        Storyboard storyboard2 = (Storyboard) sender;
-        targetUiElement.put_Opacity(0.0);
-        if (args.OnCompletedAction != null)
-          args.OnCompletedAction();
-        // ISSUE: virtual method pointer
-        WindowsRuntimeMarshal.RemoveEventHandler<EventHandler<object>>(new Action<EventRegistrationToken>((object) storyboard2, __vmethodptr(storyboard2, remove_Completed)), completed);
-        storyboard2.Stop();
-      });
-      Storyboard storyboard3 = storyboard1;
-      WindowsRuntimeMarshal.AddEventHandler<EventHandler<object>>(new Func<EventHandler<object>, EventRegistrationToken>(((Timeline) storyboard3).add_Completed), new Action<EventRegistrationToken>(((Timeline) storyboard3).remove_Completed), completed);
-      storyboard1.Begin();
-      return storyboard1;
+            // prepare transform and initial state
+            target.CacheMode = new BitmapCache();
+            var bounds = Window.Current.CoreWindow.Bounds;
+            var ct = new CompositeTransform
+            {
+                CenterX = bounds.Width / 2.0,
+                CenterY = bounds.Height / 2.0,
+                ScaleX = 0.85,
+                ScaleY = 0.85
+            };
+            target.RenderTransform = ct;
+            target.Opacity = 0.0;
+
+            var sb = CreateScaleAndFadeStoryboard(target, 220, fadeIn: true);
+
+            void Completed(object s, object e)
+            {
+                target.CacheMode = null;
+                target.Opacity = 1.0;
+                if (target.RenderTransform is CompositeTransform rt)
+                {
+                    rt.ScaleX = 1.0;
+                    rt.ScaleY = 1.0;
+                }
+                sb.Completed -= Completed;
+                sb.Stop();
+            }
+
+            sb.Completed += Completed;
+            sb.Begin();
+            return sb;
+        }
+
+        public override Storyboard RunGoAwayBackwardTransition(NavigationTransitionArgs args)
+        {
+            if (!(args.TargetPage is UserControl uc))
+                return null;
+            var target = uc.Content as UIElement;
+            if (target == null)
+                return null;
+
+            target.CacheMode = new BitmapCache();
+            target.RenderTransform = new CompositeTransform();
+            target.Opacity = 1.0;
+
+            var sb = new Storyboard();
+            sb.Duration = new Duration(TimeSpan.FromMilliseconds(230));
+            Storyboard.SetTarget(sb, target);
+
+            var ease = new QuadraticEase { EasingMode = EasingMode.EaseIn };
+
+            var animTranslateY = new DoubleAnimation
+            {
+                To = 120.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
+                EnableDependentAnimation = true,
+                FillBehavior = FillBehavior.Stop,
+                EasingFunction = ease
+            };
+            Storyboard.SetTargetProperty(animTranslateY, "(UIElement.RenderTransform).(CompositeTransform.TranslateY)");
+            sb.Children.Add(animTranslateY);
+
+            var animOpacity = new DoubleAnimation
+            {
+                To = 0.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
+                EnableDependentAnimation = true,
+                FillBehavior = FillBehavior.Stop,
+                EasingFunction = ease
+            };
+            Storyboard.SetTargetProperty(animOpacity, "Opacity");
+            sb.Children.Add(animOpacity);
+
+            void Completed(object s, object e)
+            {
+                target.CacheMode = null;
+                target.Opacity = 0.0;
+                args.OnCompletedAction?.Invoke();
+                sb.Completed -= Completed;
+                sb.Stop();
+            }
+
+            sb.Completed += Completed;
+            sb.Begin();
+            return sb;
+        }
+
+        public override Storyboard RunGoInBackwardTransition(NavigationTransitionArgs args)
+        {
+            if (!(args.TargetPage is UserControl uc))
+                return null;
+            var target = uc.Content as UIElement;
+            if (target == null)
+                return null;
+
+            target.CacheMode = new BitmapCache();
+            target.Opacity = 0.0;
+
+            var sb = new Storyboard();
+            sb.Duration = new Duration(TimeSpan.FromMilliseconds(230));
+            Storyboard.SetTarget(sb, target);
+
+            var animOpacity = new DoubleAnimation
+            {
+                To = 1.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
+                EnableDependentAnimation = true,
+                FillBehavior = FillBehavior.Stop
+            };
+            Storyboard.SetTargetProperty(animOpacity, "Opacity");
+            sb.Children.Add(animOpacity);
+
+            void Completed(object s, object e)
+            {
+                target.CacheMode = null;
+                target.Opacity = 1.0;
+                sb.Completed -= Completed;
+                sb.Stop();
+            }
+
+            sb.Completed += Completed;
+            sb.Begin();
+            return sb;
+        }
+
+        public override Storyboard RunGoAwayForwardTransition(NavigationTransitionArgs args)
+        {
+            if (!(args.TargetPage is UserControl uc))
+                return null;
+            var target = uc.Content as UIElement;
+            if (target == null)
+                return null;
+
+            target.CacheMode = new BitmapCache();
+            target.Opacity = 1.0;
+
+            var sb = new Storyboard();
+            sb.Duration = new Duration(TimeSpan.FromMilliseconds(230));
+            Storyboard.SetTarget(sb, target);
+
+            var animOpacity = new DoubleAnimation
+            {
+                To = 0.0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(220)),
+                EnableDependentAnimation = true,
+                FillBehavior = FillBehavior.Stop,
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+            };
+            Storyboard.SetTargetProperty(animOpacity, "Opacity");
+            sb.Children.Add(animOpacity);
+
+            void Completed(object s, object e)
+            {
+                target.CacheMode = null;
+                target.Opacity = 0.0;
+                args.OnCompletedAction?.Invoke();
+                sb.Completed -= Completed;
+                sb.Stop();
+            }
+
+            sb.Completed += Completed;
+            sb.Begin();
+            return sb;
+        }
     }
-  }
 }

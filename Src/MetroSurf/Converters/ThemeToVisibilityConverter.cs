@@ -15,7 +15,11 @@ namespace VPN.Converters
   {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-      return parameter == null ? (object) null : (object) (Visibility) (string.Equals(Application.Current.RequestedTheme == 1 ? "Dark" : "Light", (string) parameter, StringComparison.OrdinalIgnoreCase) ? 0 : 1);
+      if (parameter == null)
+        return null;
+      string currentTheme = Application.Current.RequestedTheme == ApplicationTheme.Dark ? "Dark" : "Light";
+      bool match = string.Equals(currentTheme, (string)parameter, StringComparison.OrdinalIgnoreCase);
+      return match ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

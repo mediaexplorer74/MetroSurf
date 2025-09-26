@@ -45,11 +45,13 @@ namespace VPN.View.Controls
         return;
       if ((bool) args.NewValue)
       {
-        TextBox textBox2 = textBox1;
-        WindowsRuntimeMarshal.AddEventHandler<TextChangedEventHandler>(new Func<TextChangedEventHandler, EventRegistrationToken>(textBox2.add_TextChanged), new Action<EventRegistrationToken>(textBox2.remove_TextChanged), new TextChangedEventHandler(ValidationTextBoxUpdateSourceTextHelper.AttachedTextBoxTextChanged));
+        try { textBox1.TextChanged -= ValidationTextBoxUpdateSourceTextHelper.AttachedTextBoxTextChanged; } catch { }
+        textBox1.TextChanged += ValidationTextBoxUpdateSourceTextHelper.AttachedTextBoxTextChanged;
       }
       else
-        WindowsRuntimeMarshal.RemoveEventHandler<TextChangedEventHandler>(new Action<EventRegistrationToken>(textBox1.remove_TextChanged), new TextChangedEventHandler(ValidationTextBoxUpdateSourceTextHelper.AttachedTextBoxTextChanged));
+      {
+        try { textBox1.TextChanged -= ValidationTextBoxUpdateSourceTextHelper.AttachedTextBoxTextChanged; } catch { }
+      }
     }
 
     private static void AttachedTextBoxTextChanged(object sender, TextChangedEventArgs e)

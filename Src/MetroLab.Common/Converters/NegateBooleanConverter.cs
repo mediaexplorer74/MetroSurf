@@ -15,12 +15,29 @@ namespace MetroLab.Common.Converters
   {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-      return (object) !(bool) value;
+      if (value is bool b)
+      {
+        if (targetType == typeof(Visibility))
+          return b ? Visibility.Collapsed : Visibility.Visible;
+        return !b;
+      }
+      if (value is Visibility v)
+      {
+        // invert visibility
+        if (targetType == typeof(bool))
+          return v != Visibility.Visible;
+        return v == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+      }
+      return DependencyProperty.UnsetValue;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-      return (object) (bool) (!(value is Visibility) ? 0 : ((Visibility) value == 0 ? 1 : 0));
+      if (value is bool b)
+        return !b;
+      if (value is Visibility v)
+        return v != Visibility.Visible;
+      return DependencyProperty.UnsetValue;
     }
   }
 }

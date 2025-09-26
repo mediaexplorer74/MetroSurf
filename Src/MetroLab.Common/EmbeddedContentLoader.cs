@@ -1,8 +1,5 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: MetroLab.Common.EmbeddedContentLoader
-// Assembly: MetroLab.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: DBAE00CF-9C6B-4D8D-ACBC-54BA0CE44A06
-// Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\MetroLab.Common.dll
 
 using System;
 using System.Collections.Generic;
@@ -12,6 +9,10 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using System.Reflection;
 
 #nullable disable
 namespace MetroLab.Common
@@ -54,36 +55,69 @@ namespace MetroLab.Common
       this._elementsQueue.StartWorker();
     }
 
+    // Simplified implementation for MVP: attempt to set source on UI element from packaged file path
     public async Task<bool> SetCachedSource(object element, string fileRelativePath)
     {
-      // ISSUE: object of a compiler-generated type is created
-      // ISSUE: variable of a compiler-generated type
-      EmbeddedContentLoader.\u003C\u003Ec__DisplayClass8_0 cDisplayClass80 = new EmbeddedContentLoader.\u003C\u003Ec__DisplayClass8_0();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass80.element = element;
       if (fileRelativePath == null)
-        throw new ArgumentNullException(nameof (fileRelativePath));
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass80.task = new TaskCompletionSource<bool>();
-      // ISSUE: reference to a compiler-generated field
-      cDisplayClass80.localUri = Package.Current.InstalledLocation.Path + "\\" + fileRelativePath.Replace('/', '\\');
-      // ISSUE: reference to a compiler-generated field
-      // ISSUE: reference to a compiler-generated method
-      cDisplayClass80.action = new Action<object>(cDisplayClass80.\u003CSetCachedSource\u003Eb__0);
-      // ISSUE: reference to a compiler-generated field
-      if (cDisplayClass80.element is FrameworkElement element1)
+        throw new ArgumentNullException(nameof(fileRelativePath));
+
+      // Build ms-appx URI for packaged content
+      var uriString = fileRelativePath.StartsWith("ms-appx:/", StringComparison.OrdinalIgnoreCase) ? fileRelativePath : (fileRelativePath.StartsWith("/") ? "ms-appx://" + fileRelativePath : "ms-appx:///" + fileRelativePath);
+      var localUri = new Uri(uriString);
+
+      if (element is FrameworkElement fe)
       {
-        // ISSUE: method pointer
-        await ((DependencyObject) element1).Dispatcher.RunAsync((CoreDispatcherPriority) -1, new DispatchedHandler((object) cDisplayClass80, __methodptr(\u003CSetCachedSource\u003Eb__1)));
+        var tcs = new TaskCompletionSource<bool>();
+        await fe.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+        {
+          try
+          {
+            // Image
+            if (fe is Image img)
+            {
+              img.Source = new BitmapImage(localUri);
+              tcs.SetResult(true);
+              return;
+            }
+
+            // MediaElement
+            if (fe is MediaElement me)
+            {
+              me.Source = localUri;
+              tcs.SetResult(true);
+              return;
+            }
+
+            // Try reflection: property Source (Uri or ImageSource)
+            var type = element.GetType();
+            var prop = type.GetRuntimeProperty("Source");
+            if (prop != null && prop.CanWrite)
+            {
+              if (prop.PropertyType == typeof(Uri))
+              {
+                prop.SetValue(element, localUri);
+                tcs.SetResult(true);
+                return;
+              }
+              if (typeof(ImageSource).GetTypeInfo().IsAssignableFrom(prop.PropertyType.GetTypeInfo()))
+              {
+                prop.SetValue(element, new BitmapImage(localUri));
+                tcs.SetResult(true);
+                return;
+              }
+            }
+
+            tcs.SetResult(false);
+          }
+          catch (Exception)
+          {
+            tcs.SetResult(false);
+          }
+        });
+        return await tcs.Task;
       }
-      else
-      {
-        // ISSUE: reference to a compiler-generated field
-        // ISSUE: reference to a compiler-generated field
-        cDisplayClass80.action(cDisplayClass80.element);
-      }
-      // ISSUE: reference to a compiler-generated field
-      return await cDisplayClass80.task.Task;
+
+      return false;
     }
 
     private async Task ElementsQueue_ProcessItem(
@@ -124,9 +158,12 @@ namespace MetroLab.Common
       FrameworkElement element = (FrameworkElement) o;
       if (ContentLoader.GetRemoveOldContentWhenLoading((DependencyObject) element))
         ContentLoader.GetHelper((object) element).RemoveContent();
-      WindowsRuntimeMarshal.RemoveEventHandler<RoutedEventHandler>(new Action<EventRegistrationToken>(element.remove_Unloaded), new RoutedEventHandler(this.ElementOnUnloaded));
-      FrameworkElement frameworkElement = element;
-      WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>(new Func<RoutedEventHandler, EventRegistrationToken>(frameworkElement.add_Unloaded), new Action<EventRegistrationToken>(frameworkElement.remove_Unloaded), new RoutedEventHandler(this.ElementOnUnloaded));
+      try
+      {
+        element.Unloaded -= this.ElementOnUnloaded;
+      }
+      catch { }
+      element.Unloaded += this.ElementOnUnloaded;
       await this.RemoveAllQueuedElements();
       await this.RemoveElement((object) element);
       this._elementsQueue.Enqueue((object) element, newServerPath);
@@ -137,8 +174,9 @@ namespace MetroLab.Common
     {
       FrameworkElement frameworkElement1 = (FrameworkElement) sender;
       FrameworkElement frameworkElement2 = frameworkElement1;
-      WindowsRuntimeMarshal.AddEventHandler<RoutedEventHandler>(new Func<RoutedEventHandler, EventRegistrationToken>(frameworkElement2.add_Loaded), new Action<EventRegistrationToken>(frameworkElement2.remove_Loaded), new RoutedEventHandler(this.ElementOnLoaded));
-      WindowsRuntimeMarshal.RemoveEventHandler<RoutedEventHandler>(new Action<EventRegistrationToken>(frameworkElement1.remove_Unloaded), new RoutedEventHandler(this.ElementOnUnloaded));
+      try { frameworkElement2.Loaded -= this.ElementOnLoaded; } catch { }
+      frameworkElement2.Loaded += this.ElementOnLoaded;
+      frameworkElement1.Unloaded -= this.ElementOnUnloaded;
       lock (this.PendingUnloadedElementsQueueLocker)
         this.PendingUnloadedElementsQueue.Add((object) frameworkElement1);
     }
@@ -146,7 +184,7 @@ namespace MetroLab.Common
     private async void ElementOnLoaded(object sender, RoutedEventArgs routedEventArgs)
     {
       FrameworkElement element = (FrameworkElement) sender;
-      WindowsRuntimeMarshal.RemoveEventHandler<RoutedEventHandler>(new Action<EventRegistrationToken>(element.remove_Loaded), new RoutedEventHandler(this.ElementOnLoaded));
+      element.Loaded -= this.ElementOnLoaded;
       if (!await ContentLoader.GetHelper((object) element).IsSourceEmptyAsync())
         return;
       await this.RemoveAllQueuedElements();

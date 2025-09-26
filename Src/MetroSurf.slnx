@@ -18,18 +18,6 @@
     <Platform Solution="*|x64" Project="x64" />
     <Platform Solution="*|x86" Project="x86" />
   </Project>
-  <Project Path="MetroLog.Platform/MetroLog.Platform.csproj" Id="8a202cf0-34e1-43dd-a3d9-3ed3dfdd11e8">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-  </Project>
-  <Project Path="MetroLog/MetroLog.csproj" Id="93bd0c1d-d7fc-47b8-b795-2c9924712467">
-    <Platform Solution="*|ARM" Project="ARM" />
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
-  </Project>
   <Project Path="NotificationsExtensions/NotificationsExtensions.csproj" Id="e96b73a4-881a-4f74-810e-9e58669f5758">
     <Platform Solution="*|ARM" Project="ARM" />
     <Platform Solution="*|ARM64" Project="ARM64" />

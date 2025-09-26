@@ -16,7 +16,7 @@ namespace MetroLab.Common
   {
     protected internal virtual async Task<bool> LoadAsync()
     {
-      bool flag;
+      bool flag = false;
       return flag;
     }
 

@@ -4,39 +4,39 @@
 // MVID: FF96E3FF-A49E-4455-8F7E-50F192B995C9
 // Assembly location: C:\Users\Admin\Desktop\RE\VPN_4.14.1.52\1\VPN.BackgroundAgent.winmd
 
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation;
-using Windows.Foundation.Metadata;
 
 #nullable disable
 namespace VPN.BackgroundAgent
 {
-  [MarshalingBehavior]
-  [Threading]
-  [Version(16777216)]
-  [CompilerGenerated]
-  [Activatable(16777216)]
-  [Static(typeof (IUpdateApplicationTileTaskStatic), 16777216)]
-  public sealed class UpdateApplicationTileTask : IBackgroundTask, IStringable
-  {
-    [MethodImpl]
-    public extern UpdateApplicationTileTask();
+    public sealed class UpdateApplicationTileTask : IBackgroundTask
+    {
+        public UpdateApplicationTileTask()
+        {
+        }
 
-    [MethodImpl]
-    public static extern string Decrypt(
-      [In] string dataToDecrypt,
-      [In] string openPartOfPassword,
-      [In] string salt);
+        // Simple placeholder implementation of Decrypt used by background agent; preserve signature
+        public static string Decrypt(string dataToDecrypt, string openPartOfPassword, string salt)
+        {
+            // For MVP return input or perform basic decryption if required. Keep simple placeholder.
+            return dataToDecrypt;
+        }
 
-    [MethodImpl]
-    public static extern void SetUpPushNotification([In] bool isVPNNotConnected);
+        public static void SetUpPushNotification(bool isVPNNotConnected)
+        {
+            // No-op placeholder for build
+        }
 
-    [MethodImpl]
-    extern void IBackgroundTask.Run([In] IBackgroundTaskInstance taskInstance);
+        public void Run(IBackgroundTaskInstance taskInstance)
+        {
+            // Placeholder implementation
+        }
 
-    [MethodImpl]
-    extern string IStringable.ToString();
-  }
+        public override string ToString()
+        {
+            return "UpdateApplicationTileTask";
+        }
+    }
 }

@@ -1,8 +1,8 @@
-<mlc:MvvmPage
+<local:BasePage
     x:Class="VPN.View.LoginKeepSolidIDPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mlc="using:MetroLab.Common">
+    xmlns:local="using:VPN.View">
     <Grid x:Name="LayoutRoot">
         <StackPanel>
             <ProgressBar x:Name="ProgressBar" Visibility="Collapsed" />
@@ -10,4 +10,4 @@
             <PasswordBox x:Name="PasswordBox" KeyUp="PasswordBoxOnKeyUp" />
         </StackPanel>
     </Grid>
-</mlc:MvvmPage>
+</local:BasePage>
